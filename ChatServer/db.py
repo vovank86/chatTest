@@ -16,15 +16,6 @@ association_room_user = Table('room_user', Base.metadata,
     Column('user_id', Integer, ForeignKey('user.id'))
 )
 
-#association_room_vote = Table('room_vote', Base.metadata,
-#    Column('room_id', Integer, ForeignKey('room.id')),
-#    Column('vote_id', Integer, ForeignKey('vote.id'))
-#)
-#
-#association_user_vote = Table('user_vote', Base.metadata,
-#    Column('user_id', Integer, ForeignKey('user.id')),
-#    Column('vote_id', Integer, ForeignKey('vote.id'))
-#)
 
 class Room(Base):
     __tablename__ = 'room'
@@ -35,7 +26,7 @@ class Room(Base):
     password = Column(String(20))
     secure = Column(Integer(1))
     user = relationship("User", secondary=association_room_user, backref="room")
-
+    vote = relationship("Vote")
 
     def __init__(self, name):
 
@@ -51,6 +42,7 @@ class User(Base):
     password = Column(String(20))
     login = Column(String(70))
     perm = relationship("Perm")
+    vote = relationship("Vote")
 
     def __init__(self, name):
 
@@ -60,7 +52,15 @@ class Perm(Base):
     __tablename__ = 'perm'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(100))
+    create_room = Column(Integer(1))
+    delete_room = Column(Integer(1))
+    create_vote = Column(Integer(1))
+    delete_vote = Column(Integer(1))
+    voting = Column(Integer(1))
+    make_secure = Column(Integer(1))
+    make_unsecure = Column(Integer(1))
+    add_user = Column(Integer(1))
+    delete_user = Column(Integer(1))
     user_id = Column(Integer, ForeignKey('user.id'))
 
     def __init__(self, name):
@@ -68,7 +68,17 @@ class Perm(Base):
         self.name = name
 
 
+class Vote(Base):
+    __tablename__ = 'vote'
 
+    id = Column(Integer, primary_key=True)
+    room_id = Column(Integer, ForeignKey('room.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
+    summary_vote = Column(Integer)
+
+    def __init__(self, name):
+
+        self.name = name
 
 
 Base.metadata.create_all(engine)
