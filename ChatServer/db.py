@@ -5,8 +5,9 @@ __author__ = 'Vladimir Kanubrikov'
 
 from sqlalchemy import Column, Date, Integer, String, Table
 from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, session, query
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 engine = create_engine('sqlite:///C:\\sqlitedbs\\chatTest.db', echo=True)
 Base = declarative_base()
@@ -32,6 +33,7 @@ class Room(Base):
 
         self.name = name
 
+
 class User(Base):
     __tablename__ = 'user'
 
@@ -47,6 +49,7 @@ class User(Base):
     def __init__(self, name):
 
         self.name = name
+
 
 class Perm(Base):
     __tablename__ = 'perm'
@@ -64,7 +67,6 @@ class Perm(Base):
     user_id = Column(Integer, ForeignKey('user.id'))
 
     def __init__(self, name):
-
         self.name = name
 
 
@@ -80,8 +82,10 @@ class Vote(Base):
 
         self.name = name
 
-
+Session = sessionmaker()
+Session.configure(bind=engine)
 Base.metadata.create_all(engine)
 
+session = Session()
 
-
+print session.query(User)
