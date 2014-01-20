@@ -88,4 +88,35 @@ Base.metadata.create_all(engine)
 
 session = Session()
 
-print session.query(User)
+def authUser(login, password):
+    for instance in session.query(User).order_by(User.id):
+        if(instance.login == login):
+            user = instance
+            if(checkPass(user, password)== False):
+              # print 'Login or Password is incorrect!'
+                return False
+            else:
+                startSys(user)
+                return user
+        else:
+            # print 'Login or Password is incorrect!'
+            return False
+
+
+def checkPass(user, password):
+    if(user.password == password):
+        return user
+    else:
+        return False
+
+def startSys(user):
+    # print 'Hello', user.name
+    return user
+
+
+
+
+#for instance in session.query(User).order_by(User.id):
+#    print instance.name, instance.login
+#
+#print session.query(User)

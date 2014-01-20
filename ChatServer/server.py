@@ -3,7 +3,8 @@
 
 __author__ = 'Vladimir Kanubrikov'
 
-import socket
+import socket, base64, json
+import db
 
 sock = socket.socket()
 sock.bind(('', 9090))
@@ -17,7 +18,15 @@ while True:
     data = conn.recv(1024)
     if not data:
         break
-    conn.send(data.upper())
+    userData = base64.b64decode(data)
+    userData = json.loads(userData)
+    if(userData["operation"] == "login"):
+        if(db.authUser(userData['user'], userData['password'])== False):
+            conn.send('Login or Password is incorrect!')
+        else:
+            user = db.authUser(userData['user'], userData['password'])
+            sendText = 'Hello ' + user.name
+        conn.send(sendText)
 
 conn.close()
 
