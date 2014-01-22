@@ -3,18 +3,25 @@
 
 __author__ = 'Vladimir Kanubrikov'
 
-import socket, base64, json
+import socket
+import base64
+import json
 from Tkinter import *
 
-def connect(userData):
-    json_encoded = json.dumps(userData)
-    userData = base64.b64encode(json_encoded)
-    sock = socket.socket()
+def connect(user_data):
+    json_encoded = json.dumps(user_data)
+    user_data = base64.b64encode(json_encoded)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(('localhost', 9090))
-    sock.send(userData)
-    data = sock.recv(1024)
+    print sock.recv(1024)
+    sock.send(user_data)
+    print sock.recv(1024)
     sock.close()
-    print data
+    #print data
+    #if "fail" == data:
+    #    return False
+    #else:
+    #    return data
 
 
 class LoginForm:
@@ -33,7 +40,8 @@ class LoginForm:
 
     def send_data(self, event):
         userData = {"operation":"login", "user": self.uname.get(), "password": self.password.get()}
-        connect(userData)
+        if(connect(userData)== False):
+            root.destroy()
 
 root = Tk()
 obj = LoginForm()

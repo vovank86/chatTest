@@ -86,32 +86,40 @@ Session = sessionmaker()
 Session.configure(bind=engine)
 Base.metadata.create_all(engine)
 
-session = Session()
 
-def authUser(login, password):
+
+def auth_user(login, password):
+    """
+
+    @rtype : object
+    """
+    session = Session()
     for instance in session.query(User).order_by(User.id):
         if(instance.login == login):
             user = instance
-            if(checkPass(user, password)== False):
-              # print 'Login or Password is incorrect!'
+            if not check_pass(user, password):
                 return False
             else:
-                startSys(user)
-                return user
+                return start_sys(user)
+
         else:
             # print 'Login or Password is incorrect!'
             return False
 
+    session.commit()
+    session.close()
 
-def checkPass(user, password):
+
+def check_pass(user, password):
     if(user.password == password):
         return user
     else:
         return False
 
-def startSys(user):
+def start_sys(user):
     # print 'Hello', user.name
     return user
+
 
 
 
