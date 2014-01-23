@@ -5,6 +5,7 @@ __author__ = 'vkanubrikov'
 
 from Tkinter import *
 import client
+import hashlib
 
 
 class LoginForm:
@@ -29,7 +30,8 @@ class LoginForm:
         self.button_ok.pack()
 
     def send_data(self, event):
-        user_data = {"operation": "login", "user": self.user_name.get(), "password": self.password.get()}
+        user_data = {"operation": "login", "user": self.user_name.get(),
+                     "password": hashlib.md5(self.password.get()).hexdigest()}
         server_answer = client.connect(user_data)
         if not server_answer:
             root.destroy()
@@ -38,23 +40,22 @@ class LoginForm:
             chat = ChatOpen(server_answer)
 
 
-
 class ChatOpen():
     def __init__(self, chat_data):
-
         """
 
         @rtype : object
         """
-       # data = client.base64.b64decode(chat_data)
-       # data = client.json.loads(data)
+        # data = client.base64.b64decode(chat_data)
+        # data = client.json.loads(data)
 
         self.chat = Frame(root)
         self.chat.pack()
         self.text = Text(self.chat)
         self.text.pack()
 
-        self.text.bind("<Return>", self.text.insert(END, chat_data+'\n'))
+        self.text.bind("<Return>", self.text.insert(END, chat_data + '\n'))
+
 
 root = Tk()
 obj = LoginForm()

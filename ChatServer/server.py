@@ -13,6 +13,22 @@ PORT = 9090
 address = (HOST, PORT)
 
 
+def cheek_first_run():
+    """
+    Cheek is it a first run of the chat server or not.
+    If it's the first run this function run the installation process.
+    """
+    session = db.Session()
+    if 0 == session.query(db.User).order_by(db.User.id).count():
+        db.install_chat(session)
+
+    else:
+        print '\n Now the server is starting...'
+
+
+cheek_first_run()
+
+
 class ChatServer(BaseRequestHandler):
     def setup(self):
         print self.client_address, 'connected!'
@@ -28,18 +44,16 @@ class ChatServer(BaseRequestHandler):
                 if not db.auth_user(user_data['user'], user_data['password']):
                     send_text = 'fail'
                 else:
-                    user = db.auth_user(user_data['user'], user_data['password'])
-                    send_text = user.name
+                    base_data = db.auth_user(user_data['user'], user_data['password'])
+                    send_text = base_data.name
             print send_text
 
             self.request.send(send_text)
             return
-            #if userData.strip() != 'bye':
-            #    return
+
 
     def finish(self):
         print self.client_address, 'disconnected!'
-        #self.request.send('bye ' + str(self.client_address) + '\n')
 
 #server host is a tuple ('host', port)
 server = ThreadingTCPServer(address, ChatServer)
