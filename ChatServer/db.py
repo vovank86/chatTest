@@ -11,6 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from getpass import *
 import hashlib
 
+
 engine = create_engine('sqlite:///C:\\sqlitedbs\\chatTest.db', echo=True)
 Base = declarative_base()
 
@@ -27,7 +28,7 @@ class Associations(Base):
     user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     perm_id = Column(Integer, ForeignKey('perm.id'))
     perm = relationship("Perm")
-    user = relationship("User")
+    user = relationship("User", backref='room_assocs')
 
 
 class Room(Base):
@@ -36,9 +37,9 @@ class Room(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     auth = Column(Integer(1))
-    password = Column(String(20))
+    password = Column(String(100))
     secure = Column(Integer(1))
-    user = relationship("Associations")
+    user = relationship("Associations", backref='room')
     vote = relationship("Vote")
 
     def __init__(self, name):
@@ -53,7 +54,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     registered = Column(Integer(1))
     name = Column(String(255))
-    password = Column(String(20))
+    password = Column(String(100))
     login = Column(String(70))
     vote = relationship("Vote")
 
@@ -140,7 +141,6 @@ def install_chat(session):
     name = raw_input('\nPlease type your fool name (Screen Name):')
     password = make_server_password()
 
-
     root_perm = Perm("root", 1, 1, 1, 1, 1, 1, 1, 1, 1)
     admin_perm = Perm("admin", 1, 0, 1, 1, 1, 1, 1, 1, 1)
     authorised_perm = Perm("auth_user", 1, 0, 1, 0, 1, 0, 0, 0, 0)
@@ -171,14 +171,15 @@ def auth_user(login, password):
     """
     session = Session()
     for instance in session.query(User).order_by(User.id):
+        print instance.__dict__
         if login == instance.login:
             user = instance
             if not check_pass(user, password):
                 return False
             else:
-                return start_sys(user)
+                return start_sys(user, session)
         else:
-            return False
+            continue
 
     session.commit()
     session.close()
@@ -195,8 +196,8 @@ def registration(login, name, password):
     session_reg = Session()
     user = session_reg.query(User).filter(User.login.in_([login])).one()
     user.password = hashlib.md5(password).hexdigest()
-    auth_perm = session.query(Perm).filter(Perm.name.in_(['auth_user']))
-    room = session_reg.query(Room).filter(Room.name.in_(['default_room']))
+    auth_perm = session.query(Perm).filter(Perm.name == 'auth_user')
+    room = session_reg.query(Room).filter(Room.name == 'default_room')
     a = session_reg.query(Associations).filter(Associations.user_id == user.id and Associations.room_id == room.id)
     a.perm = auth_perm
     session.commit()
@@ -204,11 +205,29 @@ def registration(login, name, password):
     start_sys(user)
 
 
-def start_sys(user):
+def start_sys(user, session):
     """
     This function return data for UI initialisation.
     @param user
     """
 
+    user_rooms = []
+    room_users = []
+    rooms = session.query(Room).all()
+    for room in rooms:
+        for r_user in room.user:
+            room_users.append(session.query(User.name).filter(User.id == r_user.user_id).one())
+        for r_user in room.user:
+            if r_user.user_id == user.id:
+                the_room = dict(room_name=room.name,
+                                perm=session.query(Perm.id, Perm.name, Perm.add_user, Perm.create_room,
+                                                   Perm.create_vote, Perm.delete_room, Perm.delete_user,
+                                                   Perm.delete_vote, Perm.make_secure, Perm.make_unsecure,
+                                                   Perm.voting).filter(Perm.id == r_user.perm_id).one().__dict__,
+                                users=room_users)
+                user_rooms.append(the_room)
 
-    return user
+    start_chat_system = {"user_login": user.login, "user_name": user.name, "user_reg": user.registered,
+                         "user_rooms": user_rooms}
+
+    return start_chat_system

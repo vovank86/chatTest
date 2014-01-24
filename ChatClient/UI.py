@@ -46,15 +46,15 @@ class ChatOpen():
 
         @rtype : object
         """
-        # data = client.base64.b64decode(chat_data)
-        # data = client.json.loads(data)
+        data = client.base64.b64decode(chat_data)
+        data = client.json.loads(data)
 
         self.chat = Frame(root)
         self.chat.pack()
         self.text = Text(self.chat)
         self.text.pack()
 
-        self.text.bind("<Return>", self.text.insert(END, chat_data + '\n'))
+        self.text.bind("<Return>", self.text.insert(END, data))
 
 
 root = Tk()

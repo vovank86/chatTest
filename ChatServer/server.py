@@ -40,13 +40,12 @@ class ChatServer(BaseRequestHandler):
             user_data = base64.b64decode(data)
             user_data = json.loads(user_data)
             if "login" == user_data["operation"]:
-                print user_data
                 if not db.auth_user(user_data['user'], user_data['password']):
                     send_text = 'fail'
                 else:
                     base_data = db.auth_user(user_data['user'], user_data['password'])
-                    send_text = base_data.name
-            print send_text
+                    send_text = json.dumps(base_data)
+                    send_text = base64.b64encode(send_text)
 
             self.request.send(send_text)
             return
