@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fcbb0743-1eed-44b7-ac18-19fce6a073da" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatClient/UI.py" afterPath="$PROJECT_DIR$/ChatClient/UI.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatServer/db.py" afterPath="$PROJECT_DIR$/ChatServer/db.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatServer/server.py" afterPath="$PROJECT_DIR$/ChatServer/server.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="chatTest.iws" />
@@ -499,7 +496,11 @@
       <created>1390576895207</created>
       <updated>1390576895207</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="comment base64 encode/decode for UI Creation (it doesn't contents secure info )">
+      <created>1390578779469</created>
+      <updated>1390578779469</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -539,7 +540,8 @@
     <MESSAGE value="refactor code and add UI functionality" />
     <MESSAGE value="sql new functionality" />
     <MESSAGE value="UI begining" />
-    <option name="LAST_COMMIT_MESSAGE" value="UI begining" />
+    <MESSAGE value="comment base64 encode/decode for UI Creation (it doesn't contents secure info )" />
+    <option name="LAST_COMMIT_MESSAGE" value="comment base64 encode/decode for UI Creation (it doesn't contents secure info )" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
