@@ -47,9 +47,10 @@ class ChatOpen():
 
         @rtype : object
         """
-        data = client.base64.b64decode(chat_data)
-        data = client.json.loads(data)
-
+        #data = client.base64.b64decode(chat_data)
+        #print data
+        data = client.json.loads(chat_data)
+        print data
         self.chat = Frame(root)
         self.chat.pack()
 
@@ -57,7 +58,7 @@ class ChatOpen():
         note.pack()
 
         for room in data['user_rooms']:
-
+            print room
             tab_inner = Frame(note)
             user_list = Listbox(tab_inner)
             chat_window = Text(tab_inner)
@@ -73,8 +74,6 @@ class ChatOpen():
                 user_list.pack()
                 if r_user != user:
                     user_list.insert(END, r_user)
-
-
 
             note.add(tab_inner, text=room['room_name'])
 

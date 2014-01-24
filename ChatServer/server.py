@@ -45,7 +45,8 @@ class ChatServer(BaseRequestHandler):
                 else:
                     base_data = db.auth_user(user_data['user'], user_data['password'])
                     send_text = json.dumps(base_data)
-                    send_text = base64.b64encode(send_text)
+                    print send_text
+                    #send_text = base64.b64encode(send_text)
 
             self.request.send(send_text)
             return

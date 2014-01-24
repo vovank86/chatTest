@@ -207,10 +207,12 @@ def start_sys(user, session):
     """
 
     user_rooms = []
-    room_users = []
+
     rooms = session.query(Room).all()
     for room in rooms:
+        room_users = []
         for r_user in room.user:
+
             room_users.append(session.query(User.name).filter(User.id == r_user.user_id).one()[0])
         for r_user in room.user:
             if r_user.user_id == user.id:
