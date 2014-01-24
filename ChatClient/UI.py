@@ -4,6 +4,7 @@
 __author__ = 'vkanubrikov'
 
 from Tkinter import *
+import ttk
 import client
 import hashlib
 
@@ -51,12 +52,42 @@ class ChatOpen():
 
         self.chat = Frame(root)
         self.chat.pack()
-        self.text = Text(self.chat)
-        self.text.pack()
 
-        self.text.bind("<Return>", self.text.insert(END, data))
+        note = ttk.Notebook(self.chat)
+        note.pack()
+
+        for room in data['user_rooms']:
+
+            tab_inner = Frame(note)
+            user_list = Listbox(tab_inner)
+            chat_window = Text(tab_inner)
+            chat_input = Entry(tab_inner)
+            chat_send = Button(tab_inner, text="Send")
+            chat_window.pack()
+            chat_input.pack()
+            chat_send.pack()
+
+            for r_user in room['users']:
+                user = data['user_name']
+
+                user_list.pack()
+                if r_user != user:
+                    user_list.insert(END, r_user)
+
+
+
+            note.add(tab_inner, text=room['room_name'])
+
+
+
+            #
+            #self.text = Text(self.chat)
+            #self.text.pack()
+
+            #self.text.bind("<Return>", self.text.insert(END, data))
 
 
 root = Tk()
+root.wm_title("Chat")
 obj = LoginForm()
 root.mainloop()

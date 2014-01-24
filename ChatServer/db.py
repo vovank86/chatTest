@@ -15,11 +15,6 @@ import hashlib
 engine = create_engine('sqlite:///C:\\sqlitedbs\\chatTest.db', echo=True)
 Base = declarative_base()
 
-#association_room_user_perm = Table('room_user_perm', Base.metadata,
-#                                   Column('room_id', Integer, ForeignKey('room.id')),
-#                                   Column('user_id', Integer, ForeignKey('user.id')),
-#                                   Column('perm_id', Integer, ForeignKey('perm.id'))
-#)
 
 class Associations(Base):
     __tablename__ = 'associations'
@@ -216,7 +211,7 @@ def start_sys(user, session):
     rooms = session.query(Room).all()
     for room in rooms:
         for r_user in room.user:
-            room_users.append(session.query(User.name).filter(User.id == r_user.user_id).one())
+            room_users.append(session.query(User.name).filter(User.id == r_user.user_id).one()[0])
         for r_user in room.user:
             if r_user.user_id == user.id:
                 the_room = dict(room_name=room.name,
