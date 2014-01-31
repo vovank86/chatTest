@@ -79,13 +79,6 @@ class ChatOpen():
 
 
 
-            #
-            #self.text = Text(self.chat)
-            #self.text.pack()
-
-            #self.text.bind("<Return>", self.text.insert(END, data))
-
-
 root = Tk()
 root.wm_title("Chat")
 obj = LoginForm()

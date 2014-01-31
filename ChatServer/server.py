@@ -1,60 +1,91 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#******************************
+# Tcp Chat server
+#******************************
+
 __author__ = 'Vladimir Kanubrikov'
 
-import base64
-import json
+import socket, select
 import db
-from SocketServer import *
-
-HOST = ''
-PORT = 9090
-address = (HOST, PORT)
 
 
-def cheek_first_run():
-    """
-    Cheek is it a first run of the chat server or not.
-    If it's the first run this function run the installation process.
-    """
-    session = db.Session()
-    if 0 == session.query(db.User).order_by(db.User.id).count():
-        db.install_chat(session)
+def broadcast_data(sock, message):
+    """Function to broadcast chat messages to all connected clients."""
 
-    else:
-        print '\n Now the server is starting...'
-
-
-cheek_first_run()
+    #Do not send the message to master socket and the client who has send us the message
+    for socket in CONNECTION_LIST:
+        if socket != server_socket and socket != sock:
+            try:
+                socket.send(message)
+            except:
+                # broken socket connection may be, chat client pressed ctrl+c for example
+                socket.close()
+                CONNECTION_LIST.remove(socket)
 
 
-class ChatServer(BaseRequestHandler):
-    def setup(self):
-        print self.client_address, 'connected!'
-        self.request.send('hi ' + str(self.client_address) + '\n')
-
-    def handle(self):
-        while 1:
-            data = self.request.recv(1024)
-            user_data = base64.b64decode(data)
-            user_data = json.loads(user_data)
-            if "login" == user_data["operation"]:
-                if not db.auth_user(user_data['user'], user_data['password']):
-                    send_text = 'fail'
-                else:
-                    base_data = db.auth_user(user_data['user'], user_data['password'])
-                    send_text = json.dumps(base_data)
-                    print send_text
-                    #send_text = base64.b64encode(send_text)
-
-            self.request.send(send_text)
-            return
+if __name__ == "__main__":
 
 
-    def finish(self):
-        print self.client_address, 'disconnected!'
+    # List to keep track of socket descriptors
+    CONNECTION_LIST = []
+    RECV_BUFFER = 4096 # Advisable to keep it as an exponent of 2
+    PORT = 9090
 
-#server host is a tuple ('host', port)
-server = ThreadingTCPServer(address, ChatServer)
-server.serve_forever()
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # this has no effect, why ?
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind(("0.0.0.0", PORT))
+    server_socket.listen(10)
+
+    # Add server socket to the list of readable connections
+    CONNECTION_LIST.append(server_socket)
+
+    def cheek_first_run():
+        """
+        Cheek is it a first run of the chat server or not.
+        If it's the first run this function run the installation process.
+        """
+        session = db.Session()
+        if 0 == session.query(db.User).order_by(db.User.id).count():
+            db.install_chat(session, PORT)
+        else:
+            print "Chat server started on port " + str(PORT)
+
+    cheek_first_run()
+
+
+
+    while 1:
+        # Get the list sockets which are ready to be read through select
+        read_sockets, write_sockets, error_sockets = select.select(CONNECTION_LIST, [], [])
+
+        for sock in read_sockets:
+            #New connection
+            if sock == server_socket:
+                # Handle the case in which there is a new connection recieved through server_socket
+                sockfd, addr = server_socket.accept()
+                CONNECTION_LIST.append(sockfd)
+                print "Client (%s, %s) connected" % addr
+
+                broadcast_data(sockfd, "[%s:%s] entered room\n" % addr)
+
+            #Some incoming message from a client
+            else:
+                # Data recieved from client, process it
+                try:
+                    #In Windows, sometimes when a TCP program closes abruptly,
+                    # a "Connection reset by peer" exception will be thrown
+                    data = sock.recv(RECV_BUFFER)
+                    if data:
+                        broadcast_data(sock, "\r" + '<' + str(sock.getpeername()) + '> ' + data)
+
+                except:
+                    broadcast_data(sock, "Client (%s, %s) is offline" % addr)
+                    print "Client (%s, %s) is offline" % addr
+                    sock.close()
+                    CONNECTION_LIST.remove(sock)
+                    continue
+
+    server_socket.close()

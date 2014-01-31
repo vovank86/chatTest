@@ -125,7 +125,7 @@ def make_server_password():
         make_server_password()
 
 
-def install_chat(session):
+def install_chat(session, PORT):
     """
     This is a procedure for first setup chat application.
     It use the command line for setup first user - root user, whom will has fool permissions.
@@ -157,7 +157,7 @@ def install_chat(session):
     session.close()
 
     print "\nThanks."
-    print '\nNow the server is starting...'
+    print "\nChat server started on port " + str(PORT)
 
 
 def auth_user(login, password):
