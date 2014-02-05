@@ -12,7 +12,7 @@ from getpass import *
 import hashlib
 
 
-engine = create_engine('sqlite:///C:\\sqlitedbs\\chatTest.db', echo=True)
+engine = create_engine('sqlite:///C:\\sqlitedbs\\chatTest.db', echo=False)
 Base = declarative_base()
 
 

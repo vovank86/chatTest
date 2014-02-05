@@ -8,7 +8,18 @@
 __author__ = 'Vladimir Kanubrikov'
 
 import socket, select
-import db
+import db, json
+
+
+def auth(sock, data):
+    for socket in CONNECTION_LIST:
+        if socket != server_socket and socket == sock:
+            try:
+                socket.send(data)
+            except:
+                # broken socket connection may be, chat client pressed ctrl+c for example
+                socket.close()
+                CONNECTION_LIST.remove(socket)
 
 
 def broadcast_data(sock, message):
@@ -37,10 +48,11 @@ if __name__ == "__main__":
     # this has no effect, why ?
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind(("0.0.0.0", PORT))
-    server_socket.listen(10)
+    server_socket.listen(5)
 
     # Add server socket to the list of readable connections
     CONNECTION_LIST.append(server_socket)
+    print CONNECTION_LIST
 
     def cheek_first_run():
         """
@@ -55,8 +67,6 @@ if __name__ == "__main__":
 
     cheek_first_run()
 
-
-
     while 1:
         # Get the list sockets which are ready to be read through select
         read_sockets, write_sockets, error_sockets = select.select(CONNECTION_LIST, [], [])
@@ -64,12 +74,9 @@ if __name__ == "__main__":
         for sock in read_sockets:
             #New connection
             if sock == server_socket:
-                # Handle the case in which there is a new connection recieved through server_socket
                 sockfd, addr = server_socket.accept()
                 CONNECTION_LIST.append(sockfd)
                 print "Client (%s, %s) connected" % addr
-
-                broadcast_data(sockfd, "[%s:%s] entered room\n" % addr)
 
             #Some incoming message from a client
             else:
@@ -79,7 +86,27 @@ if __name__ == "__main__":
                     # a "Connection reset by peer" exception will be thrown
                     data = sock.recv(RECV_BUFFER)
                     if data:
-                        broadcast_data(sock, "\r" + '<' + str(sock.getpeername()) + '> ' + data)
+                        user_data = json.loads(data)
+                        if "login" == user_data["operation"]:
+                            if not db.auth_user(user_data['user'], user_data['password']):
+                                send_text = 'fail'
+                                print "Client (%s, %s) doesn't connect" % addr
+                                sock.close()
+                                CONNECTION_LIST.remove(sock)
+                            else:
+                                base_data = db.auth_user(user_data['user'], user_data['password'])
+                                send_text = json.dumps(base_data)
+                                print send_text
+                                print "Client (%s, %s) was login" % addr
+                                auth(sockfd, send_text)
+                                broadcast_data(sockfd, "[%s:%s] entered room\n" % addr)
+
+                        elif "send_mess" == user_data["operation"]:
+                            user_data = json.dumps(user_data)
+                            print user_data
+                            auth(sock, user_data)
+                            broadcast_data(sock, user_data)
+
 
                 except:
                     broadcast_data(sock, "Client (%s, %s) is offline" % addr)

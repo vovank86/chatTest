@@ -9,38 +9,36 @@ __author__ = 'Vladimir Kanubrikov'
 
 
 # telnet program example
-import socket, select, string, sys
+import socket, select, string, sys, json
 
 
-def prompt():
-    sys.stdout.write('<You> ')
-    sys.stdout.flush()
+#def prompt():
+#   sys.stdout.write('<You> ')
+#   sys.stdout.flush()
 
-#main function
-if __name__ == "__main__":
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    if len(sys.argv) < 3:
-        print 'Usage : python telnet.py hostname port'
-        sys.exit()
+def connect(user_data):
+    host = 'localhost'
+    port = 9090
 
-    host = sys.argv[1]
-    port = int(sys.argv[2])
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(2)
 
-    # connect to remote host
     try:
         s.connect((host, port))
+
     except:
         print 'Unable to connect'
         sys.exit()
 
     print 'Connected to remote host. Start sending messages'
-    prompt()
+
+    user_data = json.dumps(user_data)
+    s.send(user_data)
 
     while 1:
-        socket_list = [sys.stdin, s]
+        socket_list = [s]
 
         # Get the list sockets which are readable
         read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
@@ -53,35 +51,13 @@ if __name__ == "__main__":
                     print '\nDisconnected from chat server'
                     sys.exit()
                 else:
-                    #print data
-                    sys.stdout.write(data)
-                    prompt()
+                    if "fail" == data:
+                        return False
+                    else:
+                        return data
 
             #user entered a message
             else:
-                msg = sys.stdin.readline()
-                s.send(msg)
-                prompt()
+                print 'wait'
 
 
-
-
-
-                #def connect(user_data):
-                #    """
-                #
-                #    @rtype : object
-                #    """
-                #    json_encoded = json.dumps(user_data)
-                #    user_data = base64.b64encode(json_encoded)
-                #    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                #    sock.connect(('localhost', 9090))
-                #    print sock.recv(1024)
-                #    sock.send(user_data)
-                #    data = sock.recv(1024)
-                #    sock.close()
-                #
-                #    if "fail" == data:
-                #        return False
-                #    else:
-                #        return data

@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-__author__ = 'vkanubrikov'
+__author__ = 'Vladimir Kanubrikov'
 
 from Tkinter import *
 import ttk
 import client
 import hashlib
+import json
 
+server_answer = {}
+chat = {}
 
 class LoginForm:
     def __init__(self):
@@ -16,6 +19,7 @@ class LoginForm:
 
         @rtype : object
         """
+
         self.lf = Frame(root)
         self.lf.pack()
         self.lab1 = Label(self.lf, text="Login:", font="Arial 18")
@@ -31,6 +35,7 @@ class LoginForm:
         self.button_ok.pack()
 
     def send_data(self, event):
+        global server_answer, chat
         user_data = {"operation": "login", "user": self.user_name.get(),
                      "password": hashlib.md5(self.password.get()).hexdigest()}
         server_answer = client.connect(user_data)
@@ -50,36 +55,72 @@ class ChatOpen():
         #data = client.base64.b64decode(chat_data)
         #print data
         data = client.json.loads(chat_data)
-        print data
+        #print data
         self.chat = Frame(root)
         self.chat.pack()
 
-        note = ttk.Notebook(self.chat)
-        note.pack()
+        self.note = ttk.Notebook(self.chat)
+        self.note.pack()
+
 
         for room in data['user_rooms']:
-            print room
-            tab_inner = Frame(note)
+            #print room
+            tab_inner = Frame(self.note)
             user_list = Listbox(tab_inner)
             chat_window = Text(tab_inner)
-            chat_input = Entry(tab_inner)
+            chat_input = Entry(tab_inner, textvariable=msg)
             chat_send = Button(tab_inner, text="Send")
             chat_window.pack()
             chat_input.pack()
             chat_send.pack()
+            chat_send.bind('<Button-1>', self.sendproc)
 
             for r_user in room['users']:
-                user = data['user_name']
+                self.user = data['user_name']
 
                 user_list.pack()
-                if r_user != user:
+                if r_user != self.user:
                     user_list.insert(END, r_user)
 
-            note.add(tab_inner, text=room['room_name'])
+            self.note.add(tab_inner, text=room['room_name'])
+
+
+    def sendproc(self, event):
+        room = self.note.tab(self.note.select(), "text")
+        message = {"operation": "send_mess", "user": self.user, "room": room, "text": msg.get()}
+        message = json.dumps(message)
+        client.s.send(message)
+        msg.set('')
+
+    def __get_active_room__(self):
+        return self.note.select()
+
+
+
+def loopproc():
+    client.s.setblocking(False)
+    global server_answer
+    try:
+        server_answer = client.s.recv(4096)
+        print server_answer
+
+        if isinstance(chat, ChatOpen):
+            act_tab = chat.__get_active_room__()
+            act_tab.config()
+    except:
+        root.after(1, loopproc)
+        return
+    #message = client.s.recv(1024)
+    #self.chat_window.insert(END, message)
+    root.after(1, loopproc)
+    return
 
 
 
 root = Tk()
+msg = StringVar()
+msg.set('')
 root.wm_title("Chat")
 obj = LoginForm()
+root.after(1, loopproc)
 root.mainloop()
