@@ -8,7 +8,7 @@ import ttk
 import client
 import hashlib
 import json
-
+#TODO: make special dict for connect info with UI elements
 server_answer = {}
 chat = {}
 
