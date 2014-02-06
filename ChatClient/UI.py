@@ -18,22 +18,29 @@ class LoginForm:
         @rtype : object
         """
 
-        self.lf = Frame(root)
+        self.lf = Frame(root, padx=5, pady=5)
         self.lf.pack()
-        self.lab1 = Label(self.lf, text="Login:", font="Arial 18")
+        self.title = Label(self.lf, text="myChat", font="Verdana 20")
+        self.lab1 = Label(self.lf, text="Login:", font="Arial 10")
         self.user_name = Entry(self.lf, width=20, bd=1)
-        self.lab2 = Label(self.lf, text="Password:", font="Arial 18")
+        self.lab2 = Label(self.lf, text="Password:", font="Arial 10")
         self.password = Entry(self.lf, width=20, bd=1, show="*")
-        self.button_ok = Button(self.lf, text="OK", width=30, height=5)
+        self.button_ok = Button(self.lf, text="Enter")
+        self.button_cancel = Button(self.lf, text="Exit")
         self.button_ok.bind("<Button-1>", self.send_data)
-        self.lab1.pack()
-        self.user_name.pack()
-        self.lab2.pack()
-        self.password.pack()
-        self.button_ok.pack()
+        self.button_cancel.bind("<Button-1>", self.exit)
+
+        self.title.grid(row=0, columnspan=4, pady=(0, 10))
+        self.lab1.grid(row=1, sticky=W)
+        self.lab2.grid(row=2, sticky=W)
+
+        self.user_name.grid(row=1, column=1, columnspan=3)
+        self.password.grid(row=2, column=1, columnspan=3)
+        self.button_ok.grid(row=4, columnspan=2, sticky=W+E+N+S, padx=(0, 2), pady=(30, 0))
+        self.button_cancel.grid(row=4, columnspan=2, column=2, sticky=W+E+N+S, padx=(2, 0), pady=(30, 0))
 
     def send_data(self, event):
-        global server_answer, chat
+        global server_answer, chat, chance
         user_data = {"operation": "login", "user": self.user_name.get(),
                      "password": hashlib.md5(self.password.get()).hexdigest()}
         server_answer = client.connect(user_data)
@@ -42,6 +49,11 @@ class LoginForm:
         else:
             self.lf.pack_forget()
             chat = ChatOpen(server_answer)
+
+    def exit(self, event):
+        client.s.close()
+        root.destroy()
+
 
 
 class ChatOpen():
@@ -132,7 +144,7 @@ if __name__ == "__main__":
     root = Tk()
     msg = StringVar()
     msg.set('')
-    root.wm_title("Chat")
+    root.wm_title("myChat")
     obj = LoginForm()
     root.after(1, loopproc)
     root.mainloop()

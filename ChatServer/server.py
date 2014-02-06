@@ -87,7 +87,7 @@ if __name__ == "__main__":
                         if "login" == user_data["operation"]:
                             if not db.auth_user(user_data['user'], user_data['password']):
                                 send_text = 'fail'
-                                print "Client (%s, %s) doesn't connect" % addr
+                                print "Client (%s, %s) login wrong" % addr
                                 sock.close()
                                 CONNECTION_LIST.remove(sock)
                             else:
