@@ -22,7 +22,7 @@ class LoginForm:
         self.lab1 = Label(self.lf, text="Login:", font="Arial 18")
         self.user_name = Entry(self.lf, width=20, bd=1)
         self.lab2 = Label(self.lf, text="Password:", font="Arial 18")
-        self.password = Entry(self.lf, width=20, bd=1)
+        self.password = Entry(self.lf, width=20, bd=1, show="*")
         self.button_ok = Button(self.lf, text="OK", width=30, height=5)
         self.button_ok.bind("<Button-1>", self.send_data)
         self.lab1.pack()
@@ -62,8 +62,8 @@ class ChatOpen():
             #print room
             tab_inner = Frame(self.note)
             user_list = Listbox(tab_inner)
-            chat_window = Text(tab_inner)
-            chat_input = Entry(tab_inner, textvariable=msg)
+            chat_window = Text(tab_inner, font="Arial 10")
+            chat_input = Entry(tab_inner, textvariable=msg, font="Arial 10")
             chat_send = Button(tab_inner, text="Send")
             chat_window.pack()
             chat_input.pack()
@@ -104,7 +104,7 @@ def loopproc():
     try:
         server_answer = client.s.recv(4096)
         server_answer = json.loads(server_answer)
-        print server_answer
+        #print server_answer
         if server_answer['operation']=='send_mess':
             if isinstance(chat, ChatOpen):
                 room_name = server_answer['room']

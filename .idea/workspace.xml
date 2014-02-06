@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="fcbb0743-1eed-44b7-ac18-19fce6a073da" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatClient/UI.py" afterPath="$PROJECT_DIR$/ChatClient/UI.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatServer/server.py" afterPath="$PROJECT_DIR$/ChatServer/server.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatServer/settings.py" afterPath="$PROJECT_DIR$/ChatServer/settings.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="chatTest.iws" />
@@ -17,11 +15,11 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/chatTest$server.coverage" NAME="server Coverage Results" MODIFIED="1391689338143" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatServer" />
+    <SUITE FILE_PATH="coverage/chatTest$server.coverage" NAME="server Coverage Results" MODIFIED="1391689621469" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatServer" />
     <SUITE FILE_PATH="coverage/chatTest$Doctests_in_C__Users_vkanubrikov_PycharmProjects_chatTest_ChatClient.coverage" NAME="Doctests in C:\Users\vkanubrikov\PycharmProjects\chatTest\ChatClient Coverage Results" MODIFIED="1390571940353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
     <SUITE FILE_PATH="coverage/chatTest$settings.coverage" NAME="settings Coverage Results" MODIFIED="1391682422466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatServer" />
     <SUITE FILE_PATH="coverage/chatTest$client.coverage" NAME="client Coverage Results" MODIFIED="1391594694193" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
-    <SUITE FILE_PATH="coverage/chatTest$UI.coverage" NAME="UI Coverage Results" MODIFIED="1391689340618" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
+    <SUITE FILE_PATH="coverage/chatTest$UI.coverage" NAME="UI Coverage Results" MODIFIED="1391689766566" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
     <SUITE FILE_PATH="coverage/chatTest$db.coverage" NAME="db Coverage Results" MODIFIED="1390213178995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatServer" />
     <SUITE FILE_PATH="coverage/chatTest$Doctests_in_C__Users_vkanubrikov_PycharmProjects_chatTest_ChatServer.coverage" NAME="Doctests in C:\Users\vkanubrikov\PycharmProjects\chatTest\ChatServer Coverage Results" MODIFIED="1390571930819" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatServer" />
   </component>
@@ -49,7 +47,7 @@
       <file leaf-file-name="UI.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ChatClient/UI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="122" column="26" selection-start="3631" selection-end="3631" vertical-scroll-proportion="3.3397746" vertical-offset="0" max-vertical-offset="2346">
+            <state line="120" column="0" selection-start="3648" selection-end="3648" vertical-scroll-proportion="0.5748792" vertical-offset="1683" max-vertical-offset="2346">
               <folding>
                 <element signature="e#83#104#0" expanded="true" />
               </folding>
@@ -519,13 +517,18 @@
       <created>1391616098181</created>
       <updated>1391616098181</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="chat works">
+      <created>1391689466745</created>
+      <updated>1391689466745</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="false" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30846325" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -541,7 +544,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -561,7 +563,8 @@
     <MESSAGE value="UI begining" />
     <MESSAGE value="comment base64 encode/decode for UI Creation (it doesn't contents secure info )" />
     <MESSAGE value="another way" />
-    <option name="LAST_COMMIT_MESSAGE" value="another way" />
+    <MESSAGE value="chat works" />
+    <option name="LAST_COMMIT_MESSAGE" value="chat works" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -678,7 +681,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ChatClient/UI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="122" column="26" selection-start="3631" selection-end="3631" vertical-scroll-proportion="3.3397746" vertical-offset="0" max-vertical-offset="2346">
+        <state line="120" column="0" selection-start="3648" selection-end="3648" vertical-scroll-proportion="0.5748792" vertical-offset="1683" max-vertical-offset="2346">
           <folding>
             <element signature="e#83#104#0" expanded="true" />
           </folding>
