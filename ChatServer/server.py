@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #******************************
-# Tcp Chat server
+# Chat server
 #******************************
 
 __author__ = 'Vladimir Kanubrikov'
@@ -96,16 +96,19 @@ if __name__ == "__main__":
                             else:
                                 base_data = db.auth_user(user_data['user'], user_data['password'])
                                 send_text = json.dumps(base_data)
-                                print send_text
+                               # print send_text
                                 print "Client (%s, %s) was login" % addr
                                 auth(sockfd, send_text)
                                 broadcast_data(sockfd, "[%s:%s] entered room\n" % addr)
 
                         elif "send_mess" == user_data["operation"]:
                             user_data = json.dumps(user_data)
-                            print user_data
+                            #print user_data
                             auth(sock, user_data)
                             broadcast_data(sock, user_data)
+
+                        else:
+                            print 'not specified operation'
 
 
                 except:

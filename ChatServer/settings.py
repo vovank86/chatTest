@@ -4,7 +4,7 @@
 __author__ = 'Vladimir Kanubrikov'
 
 #******************************
-# Tcp Chat server settings
+# Chat server settings
 #******************************
 
 DATABASES = {
@@ -17,7 +17,7 @@ DATABASES = {
         'ENGINE': 'sqlite://',
         'ROUTE': '~/chatTest/db/',
         'NAME': 'chatTest.db',
-    }
+    },
 }
 
 SERVER_SOCKET = {

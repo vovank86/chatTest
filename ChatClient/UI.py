@@ -8,9 +8,6 @@ import ttk
 import client
 import hashlib
 import json
-#TODO: make special dict for connect info with UI elements
-server_answer = {}
-chat = {}
 
 class LoginForm:
     def __init__(self):
@@ -52,17 +49,15 @@ class ChatOpen():
 
         @rtype : object
         """
-        #data = client.base64.b64decode(chat_data)
-        #print data
+
         data = client.json.loads(chat_data)
-        #print data
+
         self.chat = Frame(root)
         self.chat.pack()
-
         self.note = ttk.Notebook(self.chat)
         self.note.pack()
-
-
+        self.user = data['user_name']
+        self.chat_rooms = {}
         for room in data['user_rooms']:
             #print room
             tab_inner = Frame(self.note)
@@ -76,11 +71,12 @@ class ChatOpen():
             chat_send.bind('<Button-1>', self.sendproc)
 
             for r_user in room['users']:
-                self.user = data['user_name']
-
                 user_list.pack()
                 if r_user != self.user:
                     user_list.insert(END, r_user)
+            self.chat_rooms.update(
+                {room['room_name']: {'instance': tab_inner, 'perm': room['perm'], 'text': chat_window,
+                                     'user_list': user_list}})
 
             self.note.add(tab_inner, text=room['room_name'])
 
@@ -92,9 +88,14 @@ class ChatOpen():
         client.s.send(message)
         msg.set('')
 
-    def __get_active_room__(self):
-        return self.note.select()
+    def get_active_room(self):
+        room = self.note.tab(self.note.select(), "text")
+        room = self.chat_rooms[room]
+        return room
 
+    def get_room(self, room_name):
+        room = self.chat_rooms[room_name]
+        return room
 
 
 def loopproc():
@@ -102,25 +103,30 @@ def loopproc():
     global server_answer
     try:
         server_answer = client.s.recv(4096)
+        server_answer = json.loads(server_answer)
         print server_answer
+        if server_answer['operation']=='send_mess':
+            if isinstance(chat, ChatOpen):
+                room_name = server_answer['room']
+                room = chat.get_room(room_name)
+                user = server_answer['user']
+                room['text'].insert(END, user+':'+server_answer['text']+'\n')
 
-        if isinstance(chat, ChatOpen):
-            act_tab = chat.__get_active_room__()
-            act_tab.config()
     except:
         root.after(1, loopproc)
         return
-    #message = client.s.recv(1024)
-    #self.chat_window.insert(END, message)
+
     root.after(1, loopproc)
     return
 
 
-
-root = Tk()
-msg = StringVar()
-msg.set('')
-root.wm_title("Chat")
-obj = LoginForm()
-root.after(1, loopproc)
-root.mainloop()
+if __name__ == "__main__":
+    server_answer = {}
+    chat = {}
+    root = Tk()
+    msg = StringVar()
+    msg.set('')
+    root.wm_title("Chat")
+    obj = LoginForm()
+    root.after(1, loopproc)
+    root.mainloop()
