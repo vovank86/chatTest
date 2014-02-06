@@ -10,7 +10,6 @@ host = settings.CLIENT_SOCKET['HOST']
 port = settings.CLIENT_SOCKET['PORT']
 buf = settings.CLIENT_SOCKET['BUFFER_SIZE']
 
-
 def connect(user_data):
     s.settimeout(2)
 
@@ -21,7 +20,7 @@ def connect(user_data):
         print 'Unable to connect'
         sys.exit()
 
-    print 'Connected to remote host. Start sending messages'
+    print 'Connected to remote host.'
 
     user_data = json.dumps(user_data)
     s.send(user_data)

@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fcbb0743-1eed-44b7-ac18-19fce6a073da" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatClient/UI.py" afterPath="$PROJECT_DIR$/ChatClient/UI.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatServer/server.py" afterPath="$PROJECT_DIR$/ChatServer/server.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatClient/client.py" afterPath="$PROJECT_DIR$/ChatClient/client.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="chatTest.iws" />
@@ -45,10 +44,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UI.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="UI.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ChatClient/UI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="91" selection-start="1289" selection-end="1289" vertical-scroll-proportion="0.5072464" vertical-offset="331" max-vertical-offset="2652">
+            <state line="38" column="91" selection-start="1289" selection-end="1289" vertical-scroll-proportion="0.0" vertical-offset="331" max-vertical-offset="2652">
               <folding>
                 <element signature="e#83#104#0" expanded="true" />
               </folding>
@@ -56,10 +55,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="client.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="client.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ChatClient/client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="0" selection-start="309" selection-end="309" vertical-scroll-proportion="0.0" vertical-offset="34" max-vertical-offset="935">
+            <state line="22" column="36" selection-start="499" selection-end="499" vertical-scroll-proportion="0.547504" vertical-offset="34" max-vertical-offset="918">
               <folding />
             </state>
           </provider>
@@ -93,8 +92,8 @@
         <option value="$PROJECT_DIR$/ChatServer/settings.py" />
         <option value="$PROJECT_DIR$/ChatServer/db.py" />
         <option value="$PROJECT_DIR$/ChatServer/server.py" />
-        <option value="$PROJECT_DIR$/ChatClient/client.py" />
         <option value="$PROJECT_DIR$/ChatClient/UI.py" />
+        <option value="$PROJECT_DIR$/ChatClient/client.py" />
       </list>
     </option>
   </component>
@@ -552,7 +551,11 @@
       <created>1391695201339</created>
       <updated>1391695201339</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="view edited">
+      <created>1391699418527</created>
+      <updated>1391699418527</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -571,7 +574,7 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23265742" sideWeight="0.72049" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27951002" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27951002" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -598,7 +601,8 @@
     <MESSAGE value="Merge branch 'connection_new'&#10;&#10;Conflicts:&#10;&#9;.idea/workspace.xml&#10;" />
     <MESSAGE value="working chat" />
     <MESSAGE value="add settings for client and server" />
-    <option name="LAST_COMMIT_MESSAGE" value="add settings for client and server" />
+    <MESSAGE value="view edited" />
+    <option name="LAST_COMMIT_MESSAGE" value="view edited" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -706,19 +710,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ChatClient/client.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="0" selection-start="309" selection-end="309" vertical-scroll-proportion="0.0" vertical-offset="34" max-vertical-offset="935">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ChatClient/UI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="91" selection-start="1289" selection-end="1289" vertical-scroll-proportion="0.5072464" vertical-offset="331" max-vertical-offset="2652">
+        <state line="38" column="91" selection-start="1289" selection-end="1289" vertical-scroll-proportion="0.0" vertical-offset="331" max-vertical-offset="2652">
           <folding>
             <element signature="e#83#104#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ChatClient/client.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="36" selection-start="499" selection-end="499" vertical-scroll-proportion="0.547504" vertical-offset="34" max-vertical-offset="918">
+          <folding />
         </state>
       </provider>
     </entry>
