@@ -37,7 +37,7 @@
       <file leaf-file-name="server.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ChatServer/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="32" selection-start="1512" selection-end="1512" vertical-scroll-proportion="0.0" vertical-offset="841" max-vertical-offset="1105">
+            <state line="98" column="32" selection-start="3559" selection-end="3559" vertical-scroll-proportion="0.0" vertical-offset="1521" max-vertical-offset="2142">
               <folding />
             </state>
           </provider>
@@ -46,9 +46,9 @@
       <file leaf-file-name="UI.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ChatClient/UI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="89" column="0" selection-start="2341" selection-end="2341" vertical-scroll-proportion="0.9512605" vertical-offset="947" max-vertical-offset="1649">
+            <state line="120" column="0" selection-start="3648" selection-end="3648" vertical-scroll-proportion="0.9512605" vertical-offset="1474" max-vertical-offset="2346">
               <folding>
-                <element signature="e#75#96#0" expanded="true" />
+                <element signature="e#83#104#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -524,11 +524,7 @@
       <created>1391689826467</created>
       <updated>1391689826467</updated>
     </task>
-    <task id="LOCAL-00017" summary="chat works">
-      <created>1391690072973</created>
-      <updated>1391690072973</updated>
-    </task>
-    <option name="localTasksCounter" value="18" />
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -595,7 +591,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="10" selection-start="230" selection-end="230" vertical-scroll-proportion="0.0" vertical-offset="238" max-vertical-offset="340">
           <folding>
-            <marker date="1391690109997" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1391608346203" expanded="true" signature="-1:-1" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -618,7 +614,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="10" selection-start="230" selection-end="230" vertical-scroll-proportion="0.0" vertical-offset="238" max-vertical-offset="340">
           <folding>
-            <marker date="1391690109997" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1391608346203" expanded="true" signature="-1:-1" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -641,7 +637,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="10" selection-start="230" selection-end="230" vertical-scroll-proportion="0.0" vertical-offset="238" max-vertical-offset="340">
           <folding>
-            <marker date="1391690109997" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1391608346203" expanded="true" signature="-1:-1" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -660,14 +656,21 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="32" column="18" selection-start="513" selection-end="513" vertical-scroll-proportion="0.0" vertical-offset="301" max-vertical-offset="1173">
           <folding>
-            <marker date="1391690109997" expanded="true" signature="-1:-1" placeholder="..." />
+            <marker date="1391608346203" expanded="true" signature="-1:-1" placeholder="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ChatServer/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="2" selection-start="117" selection-end="117" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ChatServer/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="32" selection-start="1512" selection-end="1512" vertical-scroll-proportion="0.0" vertical-offset="841" max-vertical-offset="1105">
+        <state line="98" column="32" selection-start="3559" selection-end="3559" vertical-scroll-proportion="0.0" vertical-offset="1521" max-vertical-offset="2142">
           <folding />
         </state>
       </provider>
@@ -681,9 +684,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ChatClient/UI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="89" column="0" selection-start="2341" selection-end="2341" vertical-scroll-proportion="0.9512605" vertical-offset="947" max-vertical-offset="1649">
+        <state line="120" column="0" selection-start="3648" selection-end="3648" vertical-scroll-proportion="0.9512605" vertical-offset="1474" max-vertical-offset="2346">
           <folding>
-            <element signature="e#75#96#0" expanded="true" />
+            <element signature="e#83#104#0" expanded="true" />
           </folding>
         </state>
       </provider>
