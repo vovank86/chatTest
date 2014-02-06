@@ -9,11 +9,12 @@ import client
 import hashlib
 import json
 
+
 class LoginForm:
     def __init__(self):
 
         """
-
+        Class constructor which using for creating Login Screen.
         @rtype : object
         """
 
@@ -46,12 +47,11 @@ class LoginForm:
 class ChatOpen():
     def __init__(self, chat_data):
         """
-
+        Class constructor which using for creating user interface of chat system and display Chat Screen.
         @rtype : object
         """
 
         data = client.json.loads(chat_data)
-
         self.chat = Frame(root)
         self.chat.pack()
         self.note = ttk.Notebook(self.chat)
@@ -82,6 +82,7 @@ class ChatOpen():
 
 
     def sendproc(self, event):
+        """ Function which using for form message package and sent it to the chat server."""
         room = self.note.tab(self.note.select(), "text")
         message = {"operation": "send_mess", "user": self.user, "room": room, "text": msg.get()}
         message = json.dumps(message)
@@ -89,6 +90,10 @@ class ChatOpen():
         msg.set('')
 
     def get_active_room(self):
+        """
+        Function which using for get active room.
+        @return room
+        """
         room = self.note.tab(self.note.select(), "text")
         room = self.chat_rooms[room]
         return room
@@ -99,18 +104,19 @@ class ChatOpen():
 
 
 def loopproc():
+    """ Function which using for get messages and display the message in the chat window."""
     client.s.setblocking(False)
     global server_answer
     try:
         server_answer = client.s.recv(client.buf)
         server_answer = json.loads(server_answer)
         #print server_answer
-        if server_answer['operation']=='send_mess':
+        if server_answer['operation'] == 'send_mess':
             if isinstance(chat, ChatOpen):
                 room_name = server_answer['room']
                 room = chat.get_room(room_name)
                 user = server_answer['user']
-                room['text'].insert(END, user+':'+server_answer['text']+'\n')
+                room['text'].insert(END, user + ':' + server_answer['text'] + '\n')
 
     except:
         root.after(1, loopproc)
