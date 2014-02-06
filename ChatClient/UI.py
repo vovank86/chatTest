@@ -74,7 +74,8 @@ class ChatOpen():
             #print room
             tab_inner = Frame(self.note)
             user_list = Listbox(tab_inner)
-            chat_window = Text(tab_inner, font="Arial 10")
+            chat_window = Text(tab_inner, font="Arial 10", foreground='#666666')
+            chat_window.tag_configure("user", foreground='#3399ff')
             chat_input = Entry(tab_inner, textvariable=msg, font="Arial 10")
             chat_send = Button(tab_inner, text="Send")
             chat_window.pack()
@@ -128,7 +129,8 @@ def loopproc():
                 room_name = server_answer['room']
                 room = chat.get_room(room_name)
                 user = server_answer['user']
-                room['text'].insert(END, user + ':' + server_answer['text'] + '\n')
+                room['text'].insert(END, user, 'user')
+                room['text'].insert(END, ': ' + server_answer['text'] + '\n')
 
     except:
         root.after(1, loopproc)
