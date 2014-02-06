@@ -3,26 +3,15 @@
 
 __author__ = 'Vladimir Kanubrikov'
 
-#import socket
-#import base64
-#import json
-
-
-# telnet program example
-import socket, select, string, sys, json
-
-
-#def prompt():
-#   sys.stdout.write('<You> ')
-#   sys.stdout.flush()
+import socket, select, string, sys, json, settings
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host = settings.CLIENT_SOCKET['HOST']
+port = settings.CLIENT_SOCKET['PORT']
+buf = settings.CLIENT_SOCKET['BUFFER_SIZE']
+
 
 def connect(user_data):
-    host = 'localhost'
-    port = 9090
-
-
     s.settimeout(2)
 
     try:
@@ -46,7 +35,7 @@ def connect(user_data):
         for sock in read_sockets:
             #incoming message from remote server
             if sock == s:
-                data = sock.recv(4096)
+                data = sock.recv(buf)
                 if not data:
                     print '\nDisconnected from chat server'
                     sys.exit()
@@ -59,5 +48,3 @@ def connect(user_data):
             #user entered a message
             else:
                 print 'wait'
-
-

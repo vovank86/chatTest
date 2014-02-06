@@ -10,9 +10,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from getpass import *
 import hashlib
+import sys, settings
 
+if sys.platform == 'win32':
+    database = settings.DATABASES['default']
+else:
+    database = settings.DATABASES['unix']
 
-engine = create_engine('sqlite:///C:\\sqlitedbs\\chatTest.db', echo=False)
+engine = create_engine(database['ENGINE']+database['ROUTE']+database['NAME'], echo=database['DEBUG_MODE'])
 Base = declarative_base()
 
 

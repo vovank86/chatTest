@@ -7,8 +7,7 @@
 
 __author__ = 'Vladimir Kanubrikov'
 
-import socket, select
-import db, json
+import socket, select, settings, db, json
 
 
 def auth(sock, data):
@@ -38,21 +37,19 @@ def broadcast_data(sock, message):
 
 if __name__ == "__main__":
 
-
-    # List to keep track of socket descriptors
     CONNECTION_LIST = []
-    RECV_BUFFER = 4096 # Advisable to keep it as an exponent of 2
-    PORT = 9090
+    RECV_BUFFER = settings.SERVER_SOCKET['BUFFER_SIZE']
+    PORT = settings.SERVER_SOCKET['PORT']
+    HOST = settings.SERVER_SOCKET['HOST']
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # this has no effect, why ?
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_socket.bind(("0.0.0.0", PORT))
+    server_socket.bind((HOST, PORT))
     server_socket.listen(5)
 
     # Add server socket to the list of readable connections
     CONNECTION_LIST.append(server_socket)
-    print CONNECTION_LIST
 
     def cheek_first_run():
         """
@@ -96,7 +93,7 @@ if __name__ == "__main__":
                             else:
                                 base_data = db.auth_user(user_data['user'], user_data['password'])
                                 send_text = json.dumps(base_data)
-                               # print send_text
+                                # print send_text
                                 print "Client (%s, %s) was login" % addr
                                 auth(sockfd, send_text)
                                 broadcast_data(sockfd, "[%s:%s] entered room\n" % addr)

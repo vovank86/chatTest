@@ -102,7 +102,7 @@ def loopproc():
     client.s.setblocking(False)
     global server_answer
     try:
-        server_answer = client.s.recv(4096)
+        server_answer = client.s.recv(client.buf)
         server_answer = json.loads(server_answer)
         #print server_answer
         if server_answer['operation']=='send_mess':

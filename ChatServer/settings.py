@@ -12,11 +12,13 @@ DATABASES = {
         'ENGINE': 'sqlite://',
         'ROUTE': '/C:\\sqlitedbs\\',
         'NAME': 'chatTest.db',
+        'DEBUG_MODE':False,
     },
     'unix': {
         'ENGINE': 'sqlite://',
         'ROUTE': '~/chatTest/db/',
         'NAME': 'chatTest.db',
+        'DEBUG_MODE':False,
     },
 }
 
@@ -25,6 +27,3 @@ SERVER_SOCKET = {
     'HOST': '0.0.0.0',
     'PORT': 9090,
 }
-
-import sys
-print sys.platform
