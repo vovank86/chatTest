@@ -79,6 +79,8 @@ class Perm(Base):
     make_unsecure = Column(Integer(1))
     add_user = Column(Integer(1))
     delete_user = Column(Integer(1))
+    #TODO: add make admin (change permissions) rule for admin user role!
+    #TODO: add the permission for configure default for root user.
 
     def __init__(self, name, create_room, delete_room, create_vote, delete_vote, voting, make_secure, make_unsecure,
                  add_user,

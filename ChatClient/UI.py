@@ -4,11 +4,9 @@
 __author__ = 'Vladimir Kanubrikov'
 
 from Tkinter import *
-import ttk
-import client
-import hashlib
-import json
-
+import ttk, client, hashlib, json
+#TODO: start using CustomComponents
+#TODO: configure the Chat view using CustomComponents and grid
 
 class LoginForm:
     def __init__(self):
@@ -36,8 +34,8 @@ class LoginForm:
 
         self.user_name.grid(row=1, column=1, columnspan=3)
         self.password.grid(row=2, column=1, columnspan=3)
-        self.button_ok.grid(row=4, columnspan=2, sticky=W+E+N+S, padx=(0, 2), pady=(30, 0))
-        self.button_cancel.grid(row=4, columnspan=2, column=2, sticky=W+E+N+S, padx=(2, 0), pady=(30, 0))
+        self.button_ok.grid(row=4, columnspan=2, sticky=W + E + N + S, padx=(0, 2), pady=(30, 0))
+        self.button_cancel.grid(row=4, columnspan=2, column=2, sticky=W + E + N + S, padx=(2, 0), pady=(30, 0))
 
     def send_data(self, event):
         global server_answer, chat, chance
@@ -53,7 +51,6 @@ class LoginForm:
     def exit(self, event):
         client.s.close()
         root.destroy()
-
 
 
 class ChatOpen():
@@ -81,7 +78,7 @@ class ChatOpen():
             chat_window.pack()
             chat_input.pack()
             chat_send.pack()
-            chat_send.bind('<Button-1>', self.sendproc)
+            chat_send.bind('<Button-1>', self.send_process)
 
             for r_user in room['users']:
                 user_list.pack()
@@ -93,8 +90,7 @@ class ChatOpen():
 
             self.note.add(tab_inner, text=room['room_name'])
 
-
-    def sendproc(self, event):
+    def send_process(self, event):
         """ Function which using for form message package and sent it to the chat server."""
         room = self.note.tab(self.note.select(), "text")
         message = {"operation": "send_mess", "user": self.user, "room": room, "text": msg.get()}
@@ -116,7 +112,7 @@ class ChatOpen():
         return room
 
 
-def loopproc():
+def loop_process():
     """ Function which using for get messages and display the message in the chat window."""
     client.s.setblocking(False)
     global server_answer
@@ -131,12 +127,13 @@ def loopproc():
                 user = server_answer['user']
                 room['text'].insert(END, user, 'user')
                 room['text'].insert(END, ': ' + server_answer['text'] + '\n')
+                print room['perm']
 
     except:
-        root.after(1, loopproc)
+        root.after(1, loop_process)
         return
 
-    root.after(1, loopproc)
+    root.after(1, loop_process)
     return
 
 
@@ -148,5 +145,5 @@ if __name__ == "__main__":
     msg.set('')
     root.wm_title("myChat")
     obj = LoginForm()
-    root.after(1, loopproc)
+    root.after(1, loop_process)
     root.mainloop()
