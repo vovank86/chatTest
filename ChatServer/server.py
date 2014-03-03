@@ -38,6 +38,7 @@ def broadcast_data(sock, message):
 if __name__ == "__main__":
 
     CONNECTION_LIST = []
+    users = {}
     RECV_BUFFER = settings.SERVER_SOCKET['BUFFER_SIZE']
     PORT = settings.SERVER_SOCKET['PORT']
     HOST = settings.SERVER_SOCKET['HOST']
@@ -46,7 +47,7 @@ if __name__ == "__main__":
     # this has no effect, why ?
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((HOST, PORT))
-    server_socket.listen(5)
+    server_socket.listen(10)
 
     # Add server socket to the list of readable connections
     CONNECTION_LIST.append(server_socket)
@@ -65,6 +66,7 @@ if __name__ == "__main__":
     cheek_first_run()
 
     while 1:
+        print users
         # Get the list sockets which are ready to be read through select
         read_sockets, write_sockets, error_sockets = select.select(CONNECTION_LIST, [], [])
 
@@ -92,20 +94,48 @@ if __name__ == "__main__":
                                 CONNECTION_LIST.remove(sock)
                             else:
                                 base_data = db.auth_user(user_data['user'], user_data['password'])
+
+                                if users:
+                                    if not base_data['user_name'] in users:
+                                        users[base_data['user_name']] = addr
+                                  #  print users
+                                else:
+                                    users[base_data['user_name']] = addr
+                                   # print users
+
+                                for room in base_data['user_rooms']:
+                                    temp_user_dict = {}
+                                    for user in room['users']:
+                                        if user in users:
+                                            temp_user_dict[user] = users[user]
+                                        else:
+                                            temp_user_dict[user] = ''
+                                    room['users'] = temp_user_dict
+
+                                #    temp_user_list = []
+                                #    for uu in users:
+                                #        if uu.keys()[0] in room['users']:
+                                #            temp_user_list.append({'name': uu.keys()[0], 'address': uu.get(uu.keys()[0])})
+                                #        else:
+                                #           temp_user_list.append({'name': uu.keys()[0], 'address': uu.get(uu.keys()[0])})
+                                #
+                                #active_users = []
+                                #for uu in users:
+                                #    active_users.append({'name': uu.keys()[0], 'address': uu.get(uu.keys()[0])})
+                                #
+                                change_users_status = json.dumps(
+                                   {'operation': 'change_user_status', 'users': users})
                                 send_text = json.dumps(base_data)
-                                # print send_text
+                                print send_text
                                 print "Client (%s, %s) was login" % addr
                                 auth(sockfd, send_text)
-                                broadcast_data(sockfd, "[%s:%s] entered room\n" % addr)
+                                broadcast_data(sockfd, change_users_status)
 
                         elif "send_mess" == user_data["operation"]:
                             user_data = json.dumps(user_data)
-                            #print user_data
                             auth(sock, user_data)
                             broadcast_data(sock, user_data)
 
-                        else:
-                            print 'not specified operation'
 
 
                 except:
@@ -115,4 +145,4 @@ if __name__ == "__main__":
                     CONNECTION_LIST.remove(sock)
                     continue
 
-    server_socket.close()
+server_socket.close()

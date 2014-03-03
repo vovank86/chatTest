@@ -79,17 +79,21 @@ class Perm(Base):
     make_unsecure = Column(Integer(1))
     add_user = Column(Integer(1))
     delete_user = Column(Integer(1))
-    #TODO: add make admin (change permissions) rule for admin user role!
-    #TODO: add the permission for configure default for root user.
+    edit_perm = Column(Integer(1))
+    edit_perm_def = Column(Integer(1))
+
+
 
     def __init__(self, name, create_room, delete_room, create_vote, delete_vote, voting, make_secure, make_unsecure,
                  add_user,
-                 delete_user):
+                 delete_user, edit_perm, edit_perm_def):
         self.name = name
         self.create_room = create_room
         self.delete_room = delete_room
         self.create_vote = create_vote
         self.delete_vote = delete_vote
+        self.edit_perm = edit_perm
+        self.edit_perm_def = edit_perm_def
         self.voting = voting
         self.make_secure = make_secure
         self.make_unsecure = make_unsecure
@@ -143,10 +147,10 @@ def install_chat(session, PORT):
     name = raw_input('\nPlease type your fool name (Screen Name):')
     password = make_server_password()
 
-    root_perm = Perm("root", 1, 1, 1, 1, 1, 1, 1, 1, 1)
-    admin_perm = Perm("admin", 1, 0, 1, 1, 1, 1, 1, 1, 1)
-    authorised_perm = Perm("auth_user", 1, 0, 1, 0, 1, 0, 0, 0, 0)
-    guest_perm = Perm("guest", 0, 0, 1, 0, 1, 0, 0, 0, 0)
+    root_perm = Perm("root", 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+    admin_perm = Perm("admin", 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+    authorised_perm = Perm("auth_user", 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0)
+    guest_perm = Perm("guest", 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0)
 
     default_room = Room("default")
     a = Associations()
@@ -227,7 +231,7 @@ def start_sys(user, session):
                                 perm=session.query(Perm.id, Perm.name, Perm.add_user, Perm.create_room,
                                                    Perm.create_vote, Perm.delete_room, Perm.delete_user,
                                                    Perm.delete_vote, Perm.make_secure, Perm.make_unsecure,
-                                                   Perm.voting).filter(Perm.id == r_user.perm_id).one().__dict__,
+                                                   Perm.voting, Perm.edit_perm, Perm.edit_perm_def).filter(Perm.id == r_user.perm_id).one().__dict__,
                                 users=room_users)
                 user_rooms.append(the_room)
 
