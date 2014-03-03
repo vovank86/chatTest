@@ -66,7 +66,7 @@ if __name__ == "__main__":
     cheek_first_run()
 
     while 1:
-        print users
+        #print users
         # Get the list sockets which are ready to be read through select
         read_sockets, write_sockets, error_sockets = select.select(CONNECTION_LIST, [], [])
 
@@ -98,10 +98,10 @@ if __name__ == "__main__":
                                 if users:
                                     if not base_data['user_name'] in users:
                                         users[base_data['user_name']] = addr
-                                  #  print users
+
                                 else:
                                     users[base_data['user_name']] = addr
-                                   # print users
+
 
                                 for room in base_data['user_rooms']:
                                     temp_user_dict = {}
@@ -111,20 +111,7 @@ if __name__ == "__main__":
                                         else:
                                             temp_user_dict[user] = ''
                                     room['users'] = temp_user_dict
-
-                                #    temp_user_list = []
-                                #    for uu in users:
-                                #        if uu.keys()[0] in room['users']:
-                                #            temp_user_list.append({'name': uu.keys()[0], 'address': uu.get(uu.keys()[0])})
-                                #        else:
-                                #           temp_user_list.append({'name': uu.keys()[0], 'address': uu.get(uu.keys()[0])})
-                                #
-                                #active_users = []
-                                #for uu in users:
-                                #    active_users.append({'name': uu.keys()[0], 'address': uu.get(uu.keys()[0])})
-                                #
-                                change_users_status = json.dumps(
-                                   {'operation': 'change_user_status', 'users': users})
+                                change_users_status = json.dumps({'operation': 'change_user_status', 'users': users})
                                 send_text = json.dumps(base_data)
                                 print send_text
                                 print "Client (%s, %s) was login" % addr
@@ -136,10 +123,10 @@ if __name__ == "__main__":
                             auth(sock, user_data)
                             broadcast_data(sock, user_data)
 
-
-
                 except:
-                    broadcast_data(sock, "Client (%s, %s) is offline" % addr)
+                    users.remove(addr)
+                    change_users_status = json.dumps({'operation': 'change_user_status', 'users': users})
+                    broadcast_data(sockfd, change_users_status)
                     print "Client (%s, %s) is offline" % addr
                     sock.close()
                     CONNECTION_LIST.remove(sock)
