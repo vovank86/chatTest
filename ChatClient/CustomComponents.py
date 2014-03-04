@@ -29,13 +29,13 @@ class UserControl(Frame):
         assert isinstance(room_name, str)
 
         # Import images
-        _img_act = Image.open(os.path.dirname(__file__) + "/img/active.png").resize((20, 20), Image.ANTIALIAS)
-        _img_pass = Image.open(os.path.dirname(__file__) + "/img/disconect.png").resize((20, 20), Image.ANTIALIAS)
-        _img_private = Image.open(os.path.dirname(__file__) + "/img/privat_mess.png").resize((15, 15), Image.ANTIALIAS)
-        _img_cv = Image.open(os.path.dirname(__file__) + "/img/vote.png").resize((15, 15), Image.ANTIALIAS)
-        _img_dv = Image.open(os.path.dirname(__file__) + "/img/del_vote.png").resize((15, 15), Image.ANTIALIAS)
-        _img_edit = Image.open(os.path.dirname(__file__) + "/img/edit_perm.png").resize((15, 15), Image.ANTIALIAS)
-        _img_kick = Image.open(os.path.dirname(__file__) + "/img/kick.png").resize((15, 15), Image.ANTIALIAS)
+        _img_act = Image.open(os.path.dirname(__file__) + "/img/active.gif").resize((20, 20), Image.ANTIALIAS)
+        _img_pass = Image.open(os.path.dirname(__file__) + "/img/disconect.gif").resize((20, 20), Image.ANTIALIAS)
+        _img_private = Image.open(os.path.dirname(__file__) + "/img/privat_mess.gif").resize((15, 15), Image.ANTIALIAS)
+        _img_cv = Image.open(os.path.dirname(__file__) + "/img/vote.gif").resize((15, 15), Image.ANTIALIAS)
+        _img_dv = Image.open(os.path.dirname(__file__) + "/img/del_vote.gif").resize((15, 15), Image.ANTIALIAS)
+        _img_edit = Image.open(os.path.dirname(__file__) + "/img/edit_perm.gif").resize((15, 15), Image.ANTIALIAS)
+        _img_kick = Image.open(os.path.dirname(__file__) + "/img/kick.gif").resize((15, 15), Image.ANTIALIAS)
 
         self._active = ImageTk.PhotoImage(_img_act)
         self._passive = ImageTk.PhotoImage(_img_pass)
@@ -108,7 +108,9 @@ class UserList(Frame):
         for user in user_list:
             if user in self.users:
                 self.users.get(user).set_user_address(user_list.get(user))
-
+        for user in self.users:
+            if not user in user_list:
+                self.users.get(user).set_user_address('')
 
 #TODO: When components will complete kill these rows:
 #root = Tk()

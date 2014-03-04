@@ -177,7 +177,7 @@ def auth_user(login, password):
     """
     session = Session()
     for instance in session.query(User).order_by(User.id):
-        print instance.__dict__
+        #print instance.__dict__
         if login == instance.login:
             user = instance
             if not check_pass(user, password):

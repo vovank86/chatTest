@@ -7,7 +7,7 @@
 
 __author__ = 'Vladimir Kanubrikov'
 
-import socket, select, settings, db, json
+import socket, select, settings, db, json, sys
 
 
 def auth(sock, data):
@@ -66,7 +66,6 @@ if __name__ == "__main__":
     cheek_first_run()
 
     while 1:
-        #print users
         # Get the list sockets which are ready to be read through select
         read_sockets, write_sockets, error_sockets = select.select(CONNECTION_LIST, [], [])
 
@@ -86,6 +85,7 @@ if __name__ == "__main__":
                     data = sock.recv(RECV_BUFFER)
                     if data:
                         user_data = json.loads(data)
+                        print 'called server operation:', user_data["operation"]
                         if "login" == user_data["operation"]:
                             if not db.auth_user(user_data['user'], user_data['password']):
                                 send_text = 'fail'
@@ -113,21 +113,29 @@ if __name__ == "__main__":
                                     room['users'] = temp_user_dict
                                 change_users_status = json.dumps({'operation': 'change_user_status', 'users': users})
                                 send_text = json.dumps(base_data)
-                                print send_text
+                               #print send_text
                                 print "Client (%s, %s) was login" % addr
-                                auth(sockfd, send_text)
-                                broadcast_data(sockfd, change_users_status)
+                                auth(sock, send_text)
+                                broadcast_data(sock, change_users_status)
 
                         elif "send_mess" == user_data["operation"]:
                             user_data = json.dumps(user_data)
                             auth(sock, user_data)
                             broadcast_data(sock, user_data)
 
+                        elif "exit" == user_data["operation"]:
+                            address = users.get(user_data['user'])
+                            users.pop(user_data['user'])
+                            change_users_status = json.dumps({'operation': 'change_user_status', 'users': users})
+                            broadcast_data(sock, change_users_status)
+                            print "Client (%s, %s) is offline" % address
+                            sock.close()
+                            CONNECTION_LIST.remove(sock)
+                            continue
+
                 except:
-                    users.remove(addr)
-                    change_users_status = json.dumps({'operation': 'change_user_status', 'users': users})
-                    broadcast_data(sockfd, change_users_status)
-                    print "Client (%s, %s) is offline" % addr
+                    e = sys.exc_info()[0]
+                    print e
                     sock.close()
                     CONNECTION_LIST.remove(sock)
                     continue

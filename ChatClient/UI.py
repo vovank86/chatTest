@@ -101,6 +101,13 @@ class ChatOpen():
         client.s.send(message)
         msg.set('')
 
+    def exit(self):
+        print 'exit'
+        message = {"operation": "exit", "user": self.user}
+        message = json.dumps(message)
+        client.s.send(message)
+        root.destroy()
+
     def get_active_room(self):
         """
         Function which using for get active room.
@@ -115,14 +122,13 @@ class ChatOpen():
         return room
 
     def change_user_state(self, users_info):
-        print users_info
+        #print users_info
         for room in self.chat_rooms:
             room = self.chat_rooms.get(room)
 
             room_users = room.get('user_list')
-            print room_users
+            #print room_users
             room_users.change_user_state(users_info)
-
 
 
 def loop_process():
@@ -140,10 +146,12 @@ def loop_process():
                 user = server_answer['user']
                 room['text'].insert(END, user, 'user')
                 room['text'].insert(END, ': ' + server_answer['text'] + '\n')
-                print room['perm']
+                #print room['perm']
         if server_answer['operation'] == 'change_user_status':
             if isinstance(chat, ChatOpen):
                 chat.change_user_state(server_answer['users'])
+
+
 
     except:
         root.after(1, loop_process)
@@ -151,6 +159,11 @@ def loop_process():
 
     root.after(1, loop_process)
     return
+
+
+def the_exit():
+    if isinstance(chat, ChatOpen):
+        chat.exit()
 
 
 if __name__ == "__main__":
@@ -162,4 +175,5 @@ if __name__ == "__main__":
     root.wm_title("myChat")
     obj = LoginForm()
     root.after(1, loop_process)
+    root.protocol('WM_DELETE_WINDOW', the_exit)
     root.mainloop()
