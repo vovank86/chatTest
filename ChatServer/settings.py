@@ -16,7 +16,7 @@ DATABASES = {
     },
     'unix': {
         'ENGINE': 'sqlite://',
-        'ROUTE': '~/chatTest/db/',
+        'ROUTE': '//Users/vovank86/chatTest/db/',
         'NAME': 'chatTest.db',
         'DEBUG_MODE':False,
     },
