@@ -6,7 +6,7 @@ __author__ = 'Vladimir Kanubrikov'
 from Tkinter import *
 from CustomComponents import *
 import ttk, client, hashlib, json
-#TODO: start using CustomComponents
+
 #TODO: configure the Chat view using CustomComponents and grid
 
 class LoginForm:
