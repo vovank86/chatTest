@@ -5,7 +5,10 @@ __author__ = 'Vladimir Kanubrikov'
 
 from Tkinter import *
 from CustomComponents import *
-import ttk, client, hashlib, json
+import ttk
+import client
+import hashlib
+import json
 
 #TODO: configure the Chat view using CustomComponents and grid
 

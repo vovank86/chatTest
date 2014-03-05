@@ -9,19 +9,6 @@ from PIL import Image, ImageTk
 #TODO: special functionality for edit permissions
 #TODO: make logic for work with server
 
-#perm = {
-#    u'create_vote': 1, u'_labels': [u'id', u'name', u'add_user', u'create_room', u'create_vote',
-#                                    u'delete_room', u'delete_user', u'delete_vote', u'make_secure', u'make_unsecure',
-#                                    u'voting', u'edit_perm',
-#                                    u'default_edit'], u'delete_vote': 1, u'name': u'root', u'delete_room': 1,
-#    u'make_secure': 1, u'delete_user': 1,
-#    u'create_room': 1, u'add_user': 1, u'voting': 1, u'id': 1, u'make_unsecure': 1, u'edit_perm': 1,
-#    u'default_edit': 1
-#}
-#
-#users = {'Vladimir Kanubrikov': ('127.0.0.1', '63945'), 'Daddy': ('127.0.0.1', '63946'), 'Pupkin': ''}
-#
-
 class UserControl(Frame):
     def __init__(self, parent, room_name, perm, user, **options):
         Frame.__init__(self, parent, **options)
@@ -111,12 +98,3 @@ class UserList(Frame):
         for user in self.users:
             if not user in user_list:
                 self.users.get(user).set_user_address('')
-
-#TODO: When components will complete kill these rows:
-#root = Tk()
-#root.overrideredirect(False)
-#root.wm_title("test")
-#obj = UserList(root, 'default', perm, users)
-#obj.pack()
-#root.mainloop()
-

@@ -7,8 +7,12 @@
 
 __author__ = 'Vladimir Kanubrikov'
 
-import socket, select, settings, db, json, sys
-
+import socket
+import select
+import settings
+import db
+import json
+import sys
 
 def auth(sock, data):
     for socket in CONNECTION_LIST:
@@ -102,7 +106,6 @@ if __name__ == "__main__":
                                 else:
                                     users[base_data['user_name']] = addr
 
-
                                 for room in base_data['user_rooms']:
                                     temp_user_dict = {}
                                     for user in room['users']:
@@ -113,7 +116,7 @@ if __name__ == "__main__":
                                     room['users'] = temp_user_dict
                                 change_users_status = json.dumps({'operation': 'change_user_status', 'users': users})
                                 send_text = json.dumps(base_data)
-                               #print send_text
+                                #print send_text
                                 print "Client (%s, %s) was login" % addr
                                 auth(sock, send_text)
                                 broadcast_data(sock, change_users_status)
