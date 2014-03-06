@@ -133,17 +133,31 @@ class UserList(Frame):
         self.parent = parent
         self.users = {}
 
+        self.add_user = Button(self, text="Add new user into the room", relief=GROOVE, bd=0,
+                               bg="#19b3e5",
+                               foreground='#ffffff', activebackground='#6cfcb3',
+                               command=self._add_user)
+
+        if perm['add_user']:
+            self.add_user.pack(fill=BOTH, expand=1)
+
         for user in user_list:
             ul_user = UserControl(self, room_name, perm, {user: user_list.get(user)})
             self.users[user] = ul_user
             ul_user.pack(pady=(0, 1), padx=(0, 0))
 
-        self.add_user = Button(self, text="Add new user into the room", bg='#ffffff', bd=0)
-
-        if perm['add_user']:
-            self.add_user.pack(fill=BOTH, expand=1)
-
         self.configure(bg="#999999")
+        self.add_user_dialog = ''
+
+        if self.users == {}:
+            Label(self, text='Now this room doesn\'t has any users! '
+                             '\n But if you are owner of this room,  than \nyou can add users.', justify='center',
+                  bg='#ffffff', width=31, height=20,
+                  foreground='#cccccc').pack(fill=BOTH, expand=1)
+
+    def _add_user(self):
+        self.add_user_dialog = Toplevel(self)
+
 
     def change_user_state(self, user_list):
         assert isinstance(user_list, dict)
