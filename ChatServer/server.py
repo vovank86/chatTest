@@ -151,9 +151,6 @@ if __name__ == "__main__":
                                 auth(sock, kick)
 
 
-
-
-
                 except:
                     e = sys.exc_info()[0]
                     print e
