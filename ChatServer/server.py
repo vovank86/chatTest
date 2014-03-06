@@ -14,6 +14,7 @@ import db
 import json
 import sys
 
+
 def auth(sock, data):
     for socket in CONNECTION_LIST:
         if socket != server_socket and socket == sock:
@@ -135,6 +136,23 @@ if __name__ == "__main__":
                             sock.close()
                             CONNECTION_LIST.remove(sock)
                             continue
+
+                        elif "is_admin" == user_data["operation"]:
+                            is_admin = db.is_admin(user_data["user"], user_data["room"])
+                            is_admin = json.dumps({'operation': 'is_admin', 'val': is_admin})
+                            auth(sock, is_admin)
+
+                        elif "kick_user" == user_data["operation"]:
+                            kick = db.kick_user(user_data["user"], user_data["room"])
+                            if kick:
+                                kick = json.dumps(
+                                    {'operation': 'kick_user', 'user': user_data["user"], 'room': user_data["room"]})
+                                broadcast_data(sock, kick)
+                                auth(sock, kick)
+
+
+
+
 
                 except:
                     e = sys.exc_info()[0]

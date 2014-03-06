@@ -176,7 +176,8 @@ def auth_user(login, password):
     """
     session = Session()
     for instance in session.query(User).order_by(User.id):
-        #print instance.__dict__
+        #print instance
+
         if login == instance.login:
             user = instance
             if not check_pass(user, password):
@@ -210,6 +211,26 @@ def registration(login, name, password):
     start_sys(user)
 
 
+def is_admin(uname, room):
+    session_ia = Session()
+
+    u = session_ia.query(User.id).filter(User.name == uname).scalar()
+    #print u
+    r = session_ia.query(Room.id).filter(Room.name == room).scalar()
+    #print r
+    p = session_ia.query(Associations.perm_id).filter(Associations.room_id == r, Associations.user_id == u).scalar()
+    #print p
+    p_name = session_ia.query(Perm.name).filter(Perm.id == p).scalar()
+    #print p_name
+
+    if p_name == 'admin' or p_name == 'root':
+        return 'True'
+    else:
+        return 'False'
+    session_ia.commit()
+    session_ia.close()
+
+
 def start_sys(user, session):
     """
     This function return data for UI initialisation.
@@ -238,3 +259,15 @@ def start_sys(user, session):
                          "user_rooms": user_rooms}
 
     return start_chat_system
+
+
+def kick_user(user, room):
+    session_ku = Session()
+    u = session_ku.query(User.id).filter(User.name == user).scalar()
+    #print u
+    r = session_ku.query(Room.id).filter(Room.name == room).scalar()
+    #print r
+    assoc = session_ku.query(Associations).filter(Associations.room_id == r, Associations.user_id == u).delete()
+    session_ku.commit()
+    session_ku.close()
+    return assoc

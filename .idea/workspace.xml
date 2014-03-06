@@ -2,6 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fcbb0743-1eed-44b7-ac18-19fce6a073da" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ChatClient/ToolTip.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatClient/CustomComponents.py" afterPath="$PROJECT_DIR$/ChatClient/CustomComponents.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatClient/UI.py" afterPath="$PROJECT_DIR$/ChatClient/UI.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatClient/client.py" afterPath="$PROJECT_DIR$/ChatClient/client.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatServer/db.py" afterPath="$PROJECT_DIR$/ChatServer/db.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ChatServer/server.py" afterPath="$PROJECT_DIR$/ChatServer/server.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="chatTest.iws" />
@@ -14,12 +20,12 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/chatTest$server.coverage" NAME="server Coverage Results" MODIFIED="1394113366434" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatServer" />
     <SUITE FILE_PATH="coverage/chatTest$CustomComponents.coverage" NAME="CustomComponents Coverage Results" MODIFIED="1393858048371" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
-    <SUITE FILE_PATH="coverage/chatTest$server.coverage" NAME="server Coverage Results" MODIFIED="1393946331179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatServer" />
     <SUITE FILE_PATH="coverage/chatTest$Doctests_in_C__Users_vkanubrikov_PycharmProjects_chatTest_ChatClient.coverage" NAME="Doctests in C:\Users\vkanubrikov\PycharmProjects\chatTest\ChatClient Coverage Results" MODIFIED="1390571940353" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
     <SUITE FILE_PATH="coverage/chatTest$settings.coverage" NAME="settings Coverage Results" MODIFIED="1391682422466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatServer" />
-    <SUITE FILE_PATH="coverage/chatTest$client.coverage" NAME="client Coverage Results" MODIFIED="1391594694193" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
-    <SUITE FILE_PATH="coverage/chatTest$UI.coverage" NAME="UI Coverage Results" MODIFIED="1393946351923" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
+    <SUITE FILE_PATH="coverage/chatTest$client.coverage" NAME="client Coverage Results" MODIFIED="1394105953972" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
+    <SUITE FILE_PATH="coverage/chatTest$UI.coverage" NAME="UI Coverage Results" MODIFIED="1394116327499" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
     <SUITE FILE_PATH="coverage/chatTest$db.coverage" NAME="db Coverage Results" MODIFIED="1390213178995" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatServer" />
     <SUITE FILE_PATH="coverage/chatTest$Doctests_in_C__Users_vkanubrikov_PycharmProjects_chatTest_ChatServer.coverage" NAME="Doctests in C:\Users\vkanubrikov\PycharmProjects\chatTest\ChatServer Coverage Results" MODIFIED="1390571930819" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatServer" />
     <SUITE FILE_PATH="coverage/chatTest$test_custom.coverage" NAME="test_custom Coverage Results" MODIFIED="1393840715293" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ChatClient" />
@@ -41,11 +47,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="server.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="server.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ChatServer/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="142" column="21" selection-start="5842" selection-end="5842" vertical-scroll-proportion="4.1909723" vertical-offset="0" max-vertical-offset="2533">
-              <folding />
+            <state line="148" column="60" selection-start="6238" selection-end="6247" vertical-scroll-proportion="0.0" vertical-offset="1948" max-vertical-offset="2890">
+              <folding>
+                <element signature="e#162#175#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -53,7 +61,16 @@
       <file leaf-file-name="settings.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ChatServer/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="30" selection-start="380" selection-end="380" vertical-scroll-proportion="0.0" vertical-offset="289" max-vertical-offset="578">
+            <state line="14" column="27" selection-start="328" selection-end="328" vertical-scroll-proportion="0.0" vertical-offset="238" max-vertical-offset="578">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CustomComponents.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ChatClient/CustomComponents.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="138" column="45" selection-start="5737" selection-end="5737" vertical-scroll-proportion="0.0" vertical-offset="434" max-vertical-offset="2720">
               <folding />
             </state>
           </provider>
@@ -62,29 +79,18 @@
       <file leaf-file-name="db.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ChatServer/db.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="179" column="14" selection-start="5253" selection-end="5258" vertical-scroll-proportion="0.0" vertical-offset="3043" max-vertical-offset="4182">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="UI.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ChatClient/UI.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="108" column="8" selection-start="4142" selection-end="4142" vertical-scroll-proportion="0.0" vertical-offset="1479" max-vertical-offset="3145">
+            <state line="272" column="16" selection-start="8420" selection-end="8420" vertical-scroll-proportion="0.0" vertical-offset="3987" max-vertical-offset="4607">
               <folding>
-                <marker date="1393945071947" expanded="true" signature="3984:4156" placeholder="..." />
-                <marker date="1393945071947" expanded="true" signature="4541:4780" placeholder="..." />
-                <marker date="1393945071947" expanded="true" signature="5795:5850" placeholder="..." />
+                <marker date="1394109556161" expanded="true" signature="8052:8420" placeholder="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CustomComponents.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ChatClient/CustomComponents.py">
+      <file leaf-file-name="UI.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ChatClient/UI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="5" selection-start="1733" selection-end="1733" vertical-scroll-proportion="0.0" vertical-offset="1442" max-vertical-offset="2176">
+            <state line="83" column="89" selection-start="2999" selection-end="2999" vertical-scroll-proportion="0.42708334" vertical-offset="1080" max-vertical-offset="3281">
               <folding />
             </state>
           </provider>
@@ -93,7 +99,7 @@
       <file leaf-file-name="client.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ChatClient/client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="36" selection-start="499" selection-end="499" vertical-scroll-proportion="0.0" vertical-offset="286" max-vertical-offset="918">
+            <state line="49" column="35" selection-start="1185" selection-end="1185" vertical-scroll-proportion="0.0" vertical-offset="833" max-vertical-offset="986">
               <folding />
             </state>
           </provider>
@@ -124,13 +130,14 @@
       <list>
         <option value="$PROJECT_DIR$/ChatClient/__init__.py" />
         <option value="$PROJECT_DIR$/ChatClient/settings.py" />
+        <option value="$PROJECT_DIR$/ChatClient/test_custom.py" />
+        <option value="$PROJECT_DIR$/ChatClient/ToolTip.py" />
         <option value="$PROJECT_DIR$/ChatServer/settings.py" />
         <option value="$PROJECT_DIR$/ChatClient/client.py" />
-        <option value="$PROJECT_DIR$/ChatClient/test_custom.py" />
-        <option value="$PROJECT_DIR$/ChatClient/CustomComponents.py" />
         <option value="$PROJECT_DIR$/ChatServer/db.py" />
-        <option value="$PROJECT_DIR$/ChatClient/UI.py" />
         <option value="$PROJECT_DIR$/ChatServer/server.py" />
+        <option value="$PROJECT_DIR$/ChatClient/CustomComponents.py" />
+        <option value="$PROJECT_DIR$/ChatClient/UI.py" />
       </list>
     </option>
   </component>
@@ -185,6 +192,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -221,39 +229,20 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="chatTest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="chatTest" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ChatClient" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="img" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="com.jetbrains.python.configuration.PythonSdkConfigurable" />
-    <property name="last_opened_file_path" value="C:/Python27/tcl/tcl8.5" />
+    <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
+    <property name="last_opened_file_path" value="C:/Python27/tcl/tcl8.5" />
     <property name="FullScreen" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -299,25 +288,6 @@
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
-    <configuration default="false" name="settings" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ChatServer" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="chatTest" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ChatServer/settings.py" />
-      <option name="PARAMETERS" value="" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
     <configuration default="false" name="test_custom" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -355,6 +325,25 @@
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="client" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/ChatClient" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="chatTest" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ChatClient/client.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
@@ -442,6 +431,9 @@
       <option name="PARAMETERS" value="" />
       <method />
     </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
+      <method />
+    </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -463,9 +455,6 @@
       <option name="PUREUNITTEST" value="true" />
       <option name="PARAMS" value="" />
       <option name="USE_PARAM" value="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Doctests">
@@ -511,17 +500,17 @@
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.server" />
       <item index="1" class="java.lang.String" itemvalue="Python.UI" />
-      <item index="2" class="java.lang.String" itemvalue="Python.settings" />
-      <item index="3" class="java.lang.String" itemvalue="Python.test_custom" />
-      <item index="4" class="java.lang.String" itemvalue="Python.CustomComponents" />
+      <item index="2" class="java.lang.String" itemvalue="Python.test_custom" />
+      <item index="3" class="java.lang.String" itemvalue="Python.CustomComponents" />
+      <item index="4" class="java.lang.String" itemvalue="Python.client" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.UI" />
         <item index="1" class="java.lang.String" itemvalue="Python.server" />
-        <item index="2" class="java.lang.String" itemvalue="Python.CustomComponents" />
-        <item index="3" class="java.lang.String" itemvalue="Python.test_custom" />
-        <item index="4" class="java.lang.String" itemvalue="Python.settings" />
+        <item index="2" class="java.lang.String" itemvalue="Python.client" />
+        <item index="3" class="java.lang.String" itemvalue="Python.CustomComponents" />
+        <item index="4" class="java.lang.String" itemvalue="Python.test_custom" />
       </list>
     </recent_temporary>
   </component>
@@ -661,10 +650,14 @@
       <created>1393946879665</created>
       <updated>1393946879665</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="fix code format">
+      <created>1394013930207</created>
+      <updated>1394013930207</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
-  <component name="TodoView" selected-index="0">
+  <component name="TodoView" selected-index="4">
     <todo-panel id="selected-file">
       <are-packages-shown value="false" />
       <are-modules-shown value="false" />
@@ -688,22 +681,22 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32962137" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30734965" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3288889" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30734965" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32962137" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.72271717" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25667024" sideWeight="0.6703786" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26520813" sideWeight="0.6703786" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3997773" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35634744" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30846325" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35634744" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29955456" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962137" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3288889" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32850778" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -731,23 +724,20 @@
     <MESSAGE value="add highlight text in chat window" />
     <MESSAGE value="new components for UI" />
     <MESSAGE value="functionality for connect and disconnect user" />
-    <option name="LAST_COMMIT_MESSAGE" value="functionality for connect and disconnect user" />
+    <MESSAGE value="fix code format" />
+    <MESSAGE value="add kick_user functionality and redesign chat window" />
+    <option name="LAST_COMMIT_MESSAGE" value="add kick_user functionality and redesign chat window" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/ChatServer/server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="23" selection-start="0" selection-end="45" vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="527">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ChatServer/db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="13" column="0" selection-start="346" selection-end="346" vertical-scroll-proportion="0.0" vertical-offset="221" max-vertical-offset="323">
-          <folding />
+          <folding>
+            <marker date="1394109556161" expanded="true" signature="8052:8420" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -761,14 +751,18 @@
     <entry file="file://$PROJECT_DIR$/ChatServer/server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="23" selection-start="0" selection-end="45" vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="527">
-          <folding />
+          <folding>
+            <element signature="e#162#175#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ChatServer/db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="12" column="0" selection-start="345" selection-end="345" vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="323">
-          <folding />
+          <folding>
+            <marker date="1394109556161" expanded="true" signature="8052:8420" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -784,63 +778,68 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="119" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ChatClient/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="34" selection-start="34" selection-end="34" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="601" />
-      </provider>
-    </entry>
     <entry file="file://C:/Python27/Lib/lib-tk/Tkinter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1266" column="22" selection-start="50167" selection-end="50167" vertical-scroll-proportion="0.616179" vertical-offset="21164" max-vertical-offset="64617" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ChatClient/settings.py">
+    <entry file="file://$PROJECT_DIR$/ChatClient/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="1" selection-start="258" selection-end="258" vertical-scroll-proportion="0.25344038" vertical-offset="0" max-vertical-offset="872" />
+        <state line="0" column="34" selection-start="34" selection-end="34" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ChatClient/CustomComponents.py">
+    <entry file="file://$PROJECT_DIR$/ChatClient/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="5" selection-start="1733" selection-end="1733" vertical-scroll-proportion="0.0" vertical-offset="1442" max-vertical-offset="2176">
-          <folding />
-        </state>
+        <state line="13" column="1" selection-start="258" selection-end="258" vertical-scroll-proportion="0.37142858" vertical-offset="0" max-vertical-offset="595" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ChatClient/ToolTip.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="0" selection-start="70" selection-end="70" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1020" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ChatClient/client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="36" selection-start="499" selection-end="499" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="918">
+        <state line="49" column="35" selection-start="1185" selection-end="1185" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="918">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ChatServer/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="30" selection-start="380" selection-end="380" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="578">
+        <state line="14" column="27" selection-start="328" selection-end="328" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="578">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ChatServer/db.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="179" column="14" selection-start="5253" selection-end="5258" vertical-scroll-proportion="0.0" vertical-offset="3043" max-vertical-offset="4182">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ChatClient/UI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="108" column="8" selection-start="4142" selection-end="4142" vertical-scroll-proportion="0.0" vertical-offset="1479" max-vertical-offset="3145">
+        <state line="272" column="16" selection-start="8420" selection-end="8420" vertical-scroll-proportion="0.0" vertical-offset="3987" max-vertical-offset="4607">
           <folding>
-            <marker date="1393945071947" expanded="true" signature="3984:4156" placeholder="..." />
-            <marker date="1393945071947" expanded="true" signature="4541:4780" placeholder="..." />
-            <marker date="1393945071947" expanded="true" signature="5795:5850" placeholder="..." />
+            <marker date="1394109556161" expanded="true" signature="8052:8420" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ChatServer/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="142" column="21" selection-start="5842" selection-end="5842" vertical-scroll-proportion="4.1909723" vertical-offset="0" max-vertical-offset="2533">
+        <state line="148" column="60" selection-start="6238" selection-end="6247" vertical-scroll-proportion="0.0" vertical-offset="2101" max-vertical-offset="2890">
+          <folding>
+            <element signature="e#162#175#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ChatClient/CustomComponents.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="138" column="45" selection-start="5737" selection-end="5737" vertical-scroll-proportion="0.0" vertical-offset="434" max-vertical-offset="2720">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ChatClient/UI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="83" column="89" selection-start="2999" selection-end="2999" vertical-scroll-proportion="0.42708334" vertical-offset="1080" max-vertical-offset="3281">
           <folding />
         </state>
       </provider>

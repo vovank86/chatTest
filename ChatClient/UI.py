@@ -4,7 +4,7 @@
 __author__ = 'Vladimir Kanubrikov'
 
 from Tkinter import *
-from CustomComponents import *
+from CustomComponents import UserList
 import ttk
 import client
 import hashlib
@@ -71,21 +71,26 @@ class ChatOpen():
         self.note.pack()
         self.user = data['user_name']
         self.chat_rooms = {}
+
+        root.wm_title("myChat (" + self.user + ")")
+
         for room in data['user_rooms']:
             #print room
             tab_inner = Frame(self.note)
-            chat_window = Text(tab_inner, font="Arial 10", foreground='#666666')
+            tab_inner.configure(bg='#ffffff')
+            chat_window = Text(tab_inner, font="Arial 10", foreground='#666666', width=100)
             chat_window.tag_configure("user", foreground='#3399ff')
-            chat_input = Entry(tab_inner, textvariable=msg, font="Arial 10")
-            chat_send = Button(tab_inner, text="Send")
-            chat_window.pack()
-            chat_input.pack()
-            chat_send.pack()
+            chat_input = Entry(tab_inner, textvariable=msg, font="Arial 10", width=80)
+            chat_send = Button(tab_inner, text="Send", relief=GROOVE, bd=1, bg="#19b3e5",
+                               foreground='#ffffff', activebackground='#6cfcb3')
+            chat_window.grid(row=0, column=1, columnspan=2)
+            chat_input.grid(row=1, column=1, sticky=W + E + N + S)
+            chat_send.grid(row=1, column=2, sticky=W + E + N + S)
             chat_send.bind('<Button-1>', self.send_process)
             temp_list = room['users']
             temp_list.pop(self.user)
-            user_list = UserList(tab_inner, str(room['room_name']), room['perm'], temp_list)
-            user_list.pack()
+            user_list = UserList(tab_inner, str(room['room_name']), room['perm'], temp_list, self.user)
+            user_list.grid(row=0, column=0, rowspan=2, sticky=W + N)
 
             #    user_list.pack()
             #    if r_user != self.user:
@@ -133,6 +138,12 @@ class ChatOpen():
             #print room_users
             room_users.change_user_state(users_info)
 
+    def kick_user(self, user, room_name):
+        room = self.get_room(room_name)
+        room_users = room.get('user_list')
+        #print room_users
+        room_users.kick_user(user)
+
 
 def loop_process():
     """ Function which using for get messages and display the message in the chat window."""
@@ -141,25 +152,24 @@ def loop_process():
     try:
         server_answer = client.s.recv(client.buf)
         server_answer = json.loads(server_answer)
-        print server_answer
         if server_answer['operation'] == 'send_mess':
             if isinstance(chat, ChatOpen):
-                room_name = server_answer['room']
-                room = chat.get_room(room_name)
+                room = chat.get_room(server_answer['room'])
                 user = server_answer['user']
                 room['text'].insert(END, user, 'user')
                 room['text'].insert(END, ': ' + server_answer['text'] + '\n')
                 #print room['perm']
-        if server_answer['operation'] == 'change_user_status':
+        elif server_answer['operation'] == 'change_user_status':
             if isinstance(chat, ChatOpen):
                 chat.change_user_state(server_answer['users'])
 
-
+        elif server_answer['operation'] == 'kick_user':
+            if isinstance(chat, ChatOpen):
+                chat.kick_user(server_answer['user'], server_answer['room'])
 
     except:
         root.after(1, loop_process)
         return
-
     root.after(1, loop_process)
     return
 

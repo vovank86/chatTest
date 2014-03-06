@@ -48,7 +48,6 @@ def connect(user_data):
                         return False
                     else:
                         return data
-
             #user entered a message
             else:
                 print 'wait'
