@@ -3,21 +3,21 @@
 
 __author__ = 'Vladimir Kanubrikov'
 
-from sqlalchemy import Column, Date, Integer, String, Table
-from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy.orm import relationship, backref, session, query
+from sqlalchemy import Column, Integer, String, create_engine, ForeignKey
+from sqlalchemy.orm import relationship, session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from getpass import *
 import hashlib
-import sys, settings
+import sys
+import settings
 
 if sys.platform == 'win32':
     database = settings.DATABASES['default']
 else:
     database = settings.DATABASES['unix']
 
-engine = create_engine(database['ENGINE']+database['ROUTE']+database['NAME'], echo=database['DEBUG_MODE'])
+engine = create_engine(database['ENGINE'] + database['ROUTE'] + database['NAME'], echo=database['DEBUG_MODE'])
 Base = declarative_base()
 
 
@@ -81,7 +81,6 @@ class Perm(Base):
     delete_user = Column(Integer(1))
     edit_perm = Column(Integer(1))
     edit_perm_def = Column(Integer(1))
-
 
 
     def __init__(self, name, create_room, delete_room, create_vote, delete_vote, voting, make_secure, make_unsecure,
@@ -177,7 +176,8 @@ def auth_user(login, password):
     """
     session = Session()
     for instance in session.query(User).order_by(User.id):
-        #print instance.__dict__
+        #print instance
+
         if login == instance.login:
             user = instance
             if not check_pass(user, password):
@@ -211,6 +211,26 @@ def registration(login, name, password):
     start_sys(user)
 
 
+def is_admin(uname, room):
+    session_ia = Session()
+
+    u = session_ia.query(User.id).filter(User.name == uname).scalar()
+    #print u
+    r = session_ia.query(Room.id).filter(Room.name == room).scalar()
+    #print r
+    p = session_ia.query(Associations.perm_id).filter(Associations.room_id == r, Associations.user_id == u).scalar()
+    #print p
+    p_name = session_ia.query(Perm.name).filter(Perm.id == p).scalar()
+    #print p_name
+
+    if p_name == 'admin' or p_name == 'root':
+        return 'True'
+    else:
+        return 'False'
+    session_ia.commit()
+    session_ia.close()
+
+
 def start_sys(user, session):
     """
     This function return data for UI initialisation.
@@ -223,7 +243,6 @@ def start_sys(user, session):
     for room in rooms:
         room_users = []
         for r_user in room.user:
-
             room_users.append(session.query(User.name).filter(User.id == r_user.user_id).one()[0])
         for r_user in room.user:
             if r_user.user_id == user.id:
@@ -231,7 +250,8 @@ def start_sys(user, session):
                                 perm=session.query(Perm.id, Perm.name, Perm.add_user, Perm.create_room,
                                                    Perm.create_vote, Perm.delete_room, Perm.delete_user,
                                                    Perm.delete_vote, Perm.make_secure, Perm.make_unsecure,
-                                                   Perm.voting, Perm.edit_perm, Perm.edit_perm_def).filter(Perm.id == r_user.perm_id).one().__dict__,
+                                                   Perm.voting, Perm.edit_perm, Perm.edit_perm_def).filter(
+                                    Perm.id == r_user.perm_id).one().__dict__,
                                 users=room_users)
                 user_rooms.append(the_room)
 
@@ -239,3 +259,15 @@ def start_sys(user, session):
                          "user_rooms": user_rooms}
 
     return start_chat_system
+
+
+def kick_user(user, room):
+    session_ku = Session()
+    u = session_ku.query(User.id).filter(User.name == user).scalar()
+    #print u
+    r = session_ku.query(Room.id).filter(Room.name == room).scalar()
+    #print r
+    assoc = session_ku.query(Associations).filter(Associations.room_id == r, Associations.user_id == u).delete()
+    session_ku.commit()
+    session_ku.close()
+    return assoc

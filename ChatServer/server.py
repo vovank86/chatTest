@@ -7,7 +7,12 @@
 
 __author__ = 'Vladimir Kanubrikov'
 
-import socket, select, settings, db, json, sys
+import socket
+import select
+import settings
+import db
+import json
+import sys
 
 
 def auth(sock, data):
@@ -102,7 +107,6 @@ if __name__ == "__main__":
                                 else:
                                     users[base_data['user_name']] = addr
 
-
                                 for room in base_data['user_rooms']:
                                     temp_user_dict = {}
                                     for user in room['users']:
@@ -113,7 +117,7 @@ if __name__ == "__main__":
                                     room['users'] = temp_user_dict
                                 change_users_status = json.dumps({'operation': 'change_user_status', 'users': users})
                                 send_text = json.dumps(base_data)
-                               #print send_text
+                                #print send_text
                                 print "Client (%s, %s) was login" % addr
                                 auth(sock, send_text)
                                 broadcast_data(sock, change_users_status)
@@ -132,6 +136,20 @@ if __name__ == "__main__":
                             sock.close()
                             CONNECTION_LIST.remove(sock)
                             continue
+
+                        elif "is_admin" == user_data["operation"]:
+                            is_admin = db.is_admin(user_data["user"], user_data["room"])
+                            is_admin = json.dumps({'operation': 'is_admin', 'val': is_admin})
+                            auth(sock, is_admin)
+
+                        elif "kick_user" == user_data["operation"]:
+                            kick = db.kick_user(user_data["user"], user_data["room"])
+                            if kick:
+                                kick = json.dumps(
+                                    {'operation': 'kick_user', 'user': user_data["user"], 'room': user_data["room"]})
+                                broadcast_data(sock, kick)
+                                auth(sock, kick)
+
 
                 except:
                     e = sys.exc_info()[0]

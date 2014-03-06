@@ -3,12 +3,17 @@
 
 __author__ = 'Vladimir Kanubrikov'
 
-import socket, select, string, sys, json, settings
+import socket
+import select
+import sys
+import json
+import settings
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = settings.CLIENT_SOCKET['HOST']
 port = settings.CLIENT_SOCKET['PORT']
 buf = settings.CLIENT_SOCKET['BUFFER_SIZE']
+
 
 def connect(user_data):
     s.settimeout(2)
@@ -43,7 +48,6 @@ def connect(user_data):
                         return False
                     else:
                         return data
-
             #user entered a message
             else:
                 print 'wait'
