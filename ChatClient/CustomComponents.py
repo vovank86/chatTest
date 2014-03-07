@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 from ToolTip import createToolTip
 import client
 import json
+import ttk
 
 #TODO: special functionality for edit permissions
 #TODO: make logic for work with server
@@ -129,14 +130,12 @@ class UserList(Frame):
         assert isinstance(user_list, dict)
         assert isinstance(room_name, str)
 
+        self.room = room_name
         self.user = user
         self.parent = parent
         self.users = {}
 
-        self.add_user = Button(self, text="Add new user into the room", relief=GROOVE, bd=0,
-                               bg="#19b3e5",
-                               foreground='#ffffff', activebackground='#6cfcb3',
-                               command=self._add_user)
+        self.add_user = AddUser(self)
 
         if perm['add_user']:
             self.add_user.pack(fill=BOTH, expand=1)
@@ -172,3 +171,92 @@ class UserList(Frame):
         if user in self.users:
             print self.users.get(user)
             self.users.get(user).destroy()
+
+
+class AddUser(Frame):
+    def __init__(self, parent, **options):
+        Frame.__init__(self, parent, **options)
+        self.users = ''
+        self.perms = ''
+        self.parent = parent
+        self.users_found = self.users
+        self.combo = ttk.Combobox(self, values=self.users_found, width=24)
+        self.combo.bind('<FocusIn>', self.get_users)
+        self.combo.bind('<KeyRelease>', self.autocomplete)
+        self.add_button = Button(self, text='Add User', command=self.add_user, relief=RAISED, bd=0)
+        self.combo.grid(row=0, column=0)
+        self.add_button.grid(row=0, column=1)
+        self.add_dialog = ''
+
+
+    def add_user(self):
+        self.add_dialog = Toplevel(self)
+        self.add_dialog.name = Label(self.add_dialog, text=self.combo.get())
+        self.add_dialog.name.grid(row=0, column=0, columnspan=2)
+        self.add_dialog.perms = ttk.Combobox(self.add_dialog, values=self.perms)
+        self.add_dialog.perms.bind('<FocusIn>', self.get_perms)
+        perm_label = Label(self.add_dialog, text='Permissiohns: ')
+        perm_label.grid(row=1, column=0)
+        self.add_dialog.perms.grid(row=1, column=1)
+        add_button = Button(self.add_dialog, text='Add', command=self.approve)
+        close_button = Button(self.add_dialog, text='Cancel', command=self.add_dialog.destroy)
+        add_button.grid(row=2, column=0)
+        close_button.grid(row=2, column=1)
+        self.add_dialog.perms.focus_set()
+
+    def get_users(self, event):
+        self.combo.unbind('<FocusIn>')
+        client.s.send(json.dumps({'operation': 'get_users'}))
+
+        def take_answer():
+            try:
+                sa = client.s.recv(client.buf)
+                sa = json.loads(sa)
+                if sa['operation'] == 'get_users':
+                    self.users = sa['val']
+                    self.users_found = self.users
+                    self.combo['values'] = self.users_found
+
+            except:
+                take_answer()
+                return
+
+        take_answer()
+
+    def get_perms(self, event):
+        self.add_dialog.perms.unbind('<FocusIn>')
+        client.s.send(json.dumps({'operation': 'get_perms'}))
+
+        def take_answer():
+            try:
+                sa = client.s.recv(client.buf)
+                sa = json.loads(sa)
+                if sa['operation'] == 'get_perms':
+                    self.perms = sa['val']
+                    self.add_dialog.perms['values'] = self.perms
+
+            except:
+                take_answer()
+                return
+
+        take_answer()
+
+    def autocomplete(self, event):
+        char_typed = self.combo.get()
+        users_found = []
+        for item in self.users:
+            if char_typed in item:
+                users_found.append(item)
+        self.combo['values'] = users_found
+
+    def approve(self):
+        client.s.send(json.dumps({'operation': 'add_user', 'user': self.add_dialog.name.cget('text'),
+                                  'room': self.parent.room, 'perm': self.add_dialog.perms.get()}))
+        self.add_dialog.destroy()
+
+
+
+
+
+
+

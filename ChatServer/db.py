@@ -35,7 +35,7 @@ class Room(Base):
     __tablename__ = 'room'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(50))
+    name = Column(String(50), primary_key=True)
     auth = Column(Integer(1))
     password = Column(String(100))
     secure = Column(Integer(1))
@@ -53,7 +53,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     registered = Column(Integer(1))
-    name = Column(String(255))
+    name = Column(String(255), primary_key=True)
     password = Column(String(100))
     login = Column(String(70))
     vote = relationship("Vote")
@@ -69,7 +69,7 @@ class Perm(Base):
     __tablename__ = 'perm'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(255))
+    name = Column(String(255), primary_key=True)
     create_room = Column(Integer(1))
     delete_room = Column(Integer(1))
     create_vote = Column(Integer(1))
@@ -204,7 +204,7 @@ def registration(login, name, password):
     user.password = hashlib.md5(password).hexdigest()
     auth_perm = session.query(Perm).filter(Perm.name == 'auth_user')
     room = session_reg.query(Room).filter(Room.name == 'default_room')
-    a = session_reg.query(Associations).filter(Associations.user_id == user.id and Associations.room_id == room.id)
+    a = session_reg.query(Associations).filter(Associations.user_id == user.id and Associations.room_id == room.id).one()
     a.perm = auth_perm
     session.commit()
     session.close()
@@ -271,3 +271,37 @@ def kick_user(user, room):
     session_ku.commit()
     session_ku.close()
     return assoc
+
+
+def get_users():
+    session_get_users = Session()
+    users = []
+    for user in session_get_users.query(User.name).all():
+        users.append(user[0])
+    return users
+    session_get_users.commit()
+    session_get_users.close()
+
+
+def get_perms():
+    session_get_perms = Session()
+    perms = []
+    for perm in session_get_perms.query(Perm.name).all():
+        perms.append(perm[0])
+    return perms
+    session_get_perms.commit()
+    session_get_perms.close()
+
+
+def add_u_to_the_r(uname, room_name, perm_name):
+    session = Session()
+    new_u = Associations()
+    user = session.query(User.id).filter(User.name == uname).scalar()
+    room = session.query(Room.id).filter(Room.name == room_name).scalar()
+    perm = session.query(Perm.id).filter(Perm.name == perm_name).scalar()
+    new_u.user_id = user
+    new_u.perm_id = perm
+    new_u.room_id = room
+    session.add(new_u)
+    session.commit()
+    session.close()

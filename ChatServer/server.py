@@ -150,6 +150,21 @@ if __name__ == "__main__":
                                 broadcast_data(sock, kick)
                                 auth(sock, kick)
 
+                        elif "get_users" == user_data["operation"]:
+                            auth(sock, json.dumps({'operation': 'get_users', 'val': db.get_users()}))
+
+                        elif "get_perms" == user_data["operation"]:
+                            auth(sock, json.dumps({'operation': 'get_perms', 'val': db.get_perms()}))
+
+                        elif "add_user" == user_data["operation"]:
+                            user = user_data['user']
+                            room = user_data['room']
+                            perms = user_data['perm']
+                            #print user, room, perms
+                            db.add_u_to_the_r(user, room, perms)
+
+
+
 
                 except:
                     e = sys.exc_info()[0]
