@@ -12,7 +12,7 @@ DATABASES = {
         'ENGINE': 'sqlite://',
         'ROUTE': '/C:\\sqlitedbs\\',
         'NAME': 'chatTest.db',
-        'DEBUG_MODE': True,
+        'DEBUG_MODE': False,
     },
     'unix': {
         'ENGINE': 'sqlite://',
