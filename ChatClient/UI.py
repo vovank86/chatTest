@@ -107,6 +107,7 @@ class ChatOpen():
                                      'user_list': user_list}})
 
             self.note.add(tab_inner, text=room['room_name'])
+            chat_input.focus_set()
 
     def send_process(self, event):
         """ Function which using for form message package and sent it to the chat server."""
