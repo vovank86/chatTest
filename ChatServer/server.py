@@ -160,8 +160,9 @@ if __name__ == "__main__":
                             user = user_data['user']
                             room = user_data['room']
                             perms = user_data['perm']
-                            #print user, room, perms
                             db.add_u_to_the_r(user, room, perms)
+
+                            #TODO: send message about add user
 
 
 

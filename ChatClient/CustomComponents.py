@@ -11,7 +11,7 @@ import json
 import ttk
 
 #TODO: special functionality for edit permissions
-#TODO: make logic for work with server
+#TODO: make logic for work with server (add update user list after add new user, add functionality for voting)
 #TODO: make component that can replace standard notepad component and will contents special functionality
 
 
