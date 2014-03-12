@@ -46,14 +46,25 @@ class UserControl(Frame):
         # setup configuration
         self.is_admin = ''
         client.s.send(json.dumps({'operation': 'is_admin', 'room': room_name, 'user': self.user_name}))
-        sa = client.s.recv(client.buf)
-        sa = re.sub('\}\{', '};{', sa)
-        sa = re.split(';', sa)
-        for answer_item in sa:
-            server_answer = json.loads(answer_item)
-            if isinstance(server_answer, dict):
-                if server_answer["operation"] == 'is_admin':
-                    self.is_admin = server_answer['val']
+
+        def _is_admin():
+            try:
+                sa = client.s.recv(client.buf)
+                sa = re.sub('\}\{', '};{', sa)
+                sa = re.split(';', sa)
+                for answer_item in sa:
+                    server_answer = json.loads(answer_item)
+                    if isinstance(server_answer, dict):
+                        if server_answer["operation"] == 'is_admin':
+                            self.is_admin = server_answer['val']
+                return
+
+            except:
+                _is_admin()
+                return
+
+        _is_admin()
+
         self.configure(bg='#ffffff')
         self.create_vote = Button(self, image=self._cv, bg='white', bd=0)
         self.delete_vote = Button(self, image=self._dv, bg='white', bd=0)
@@ -72,7 +83,6 @@ class UserControl(Frame):
         self.display_user()
 
     def display_user(self):
-
         if self.perm['create_vote'] and self.is_admin != 'True':
             self.label_width -= 17
             self.create_vote.grid(row=0, column=2)
@@ -134,29 +144,28 @@ class UserList(Frame):
         self.user = user
         self.parent = parent
         self.users = {}
+        self.perm = perm
+        self.user_empty_informer = Label(self, text='Now this room doesn\'t has any users! '
+                                                    '\n But if you are owner of this room,  than \nyou can add users.',
+                                         justify='center',
+                                         bg='#ffffff', width=31, height=20, foreground='#cccccc')
 
         self.add_user = AddUser(self)
-
         if perm['add_user']:
             self.add_user.pack(fill=BOTH, expand=1)
 
         for user in user_list:
-            ul_user = UserControl(self, room_name, perm, {user: user_list.get(user)})
-            self.users[user] = ul_user
-            ul_user.pack(pady=(0, 1), padx=(0, 0))
+            user_obj = {user: user_list.get(user)}
+            self.user_add(user_obj)
 
         self.configure(bg="#999999")
         self.add_user_dialog = ''
 
         if self.users == {}:
-            Label(self, text='Now this room doesn\'t has any users! '
-                             '\n But if you are owner of this room,  than \nyou can add users.', justify='center',
-                  bg='#ffffff', width=31, height=20,
-                  foreground='#cccccc').pack(fill=BOTH, expand=1)
+            self.user_empty_informer.pack(fill=BOTH, expand=1)
 
     def _add_user(self):
         self.add_user_dialog = Toplevel(self)
-
 
     def change_user_state(self, user_list):
         assert isinstance(user_list, dict)
@@ -167,10 +176,24 @@ class UserList(Frame):
             if not user in user_list:
                 self.users.get(user).set_user_address('')
 
+    def user_add(self, user_info):
+        user = user_info.keys()[0]
+        ul_user = UserControl(self, self.room, self.perm, user_info)
+        if len(self.users) == 0:
+            informer_packed = 1
+        else:
+            informer_packed = 0
+        self.users[user] = ul_user
+        if len(self.users) > 0 and informer_packed:
+            self.user_empty_informer.pack_forget()
+        ul_user.pack(pady=(0, 1), padx=(0, 0))
+
     def kick_user(self, user):
         if user in self.users:
-            print self.users.get(user)
-            self.users.get(user).destroy()
+            kicked_user = self.users.pop(user)
+            kicked_user.destroy()
+            if len(self.users) == 0:
+                self.user_empty_informer.pack()
 
 
 class AddUser(Frame):
@@ -187,7 +210,6 @@ class AddUser(Frame):
         self.combo.grid(row=0, column=0)
         self.add_button.grid(row=0, column=1)
         self.add_dialog = ''
-
 
     def add_user(self):
         self.add_dialog = Toplevel(self)
@@ -253,6 +275,8 @@ class AddUser(Frame):
         client.s.send(json.dumps({'operation': 'add_user', 'user': self.add_dialog.name.cget('text'),
                                   'room': self.parent.room, 'perm': self.add_dialog.perms.get()}))
         self.add_dialog.destroy()
+
+
 
 
 

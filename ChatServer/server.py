@@ -40,6 +40,16 @@ def broadcast_data(sock, message):
                 CONNECTION_LIST.remove(socket)
 
 
+def update_user_info(room):
+    temp_user_dict = {}
+    for user in room['users']:
+        if user in users:
+            temp_user_dict[user] = users[user]
+        else:
+            temp_user_dict[user] = ''
+    room['users'] = temp_user_dict
+
+
 if __name__ == "__main__":
 
     CONNECTION_LIST = []
@@ -108,13 +118,8 @@ if __name__ == "__main__":
                                     users[base_data['user_name']] = addr
 
                                 for room in base_data['user_rooms']:
-                                    temp_user_dict = {}
-                                    for user in room['users']:
-                                        if user in users:
-                                            temp_user_dict[user] = users[user]
-                                        else:
-                                            temp_user_dict[user] = ''
-                                    room['users'] = temp_user_dict
+                                    update_user_info(room)
+
                                 change_users_status = json.dumps({'operation': 'change_user_status', 'users': users})
                                 send_text = json.dumps(base_data)
                                 #print send_text
@@ -160,12 +165,12 @@ if __name__ == "__main__":
                             user = user_data['user']
                             room = user_data['room']
                             perms = user_data['perm']
-                            db.add_u_to_the_r(user, room, perms)
-
-                            #TODO: send message about add user
-
-
-
+                            add_user_obj = db.add_u_to_the_r(user, room, perms)
+                            user = add_user_obj['user_name']
+                            room = add_user_obj['room']
+                            update_user_info(room)
+                            auth(sock, json.dumps({'operation': 'add_user', 'user': user, 'room': room}))
+                            broadcast_data(sock, json.dumps({'operation': 'add_user', 'user': user, 'room': room}))
 
                 except:
                     e = sys.exc_info()[0]

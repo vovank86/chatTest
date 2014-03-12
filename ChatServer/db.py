@@ -299,9 +299,28 @@ def add_u_to_the_r(uname, room_name, perm_name):
     user = session.query(User.id).filter(User.name == uname).scalar()
     room = session.query(Room.id).filter(Room.name == room_name).scalar()
     perm = session.query(Perm.id).filter(Perm.name == perm_name).scalar()
+
     new_u.user_id = user
     new_u.perm_id = perm
     new_u.room_id = room
     session.add(new_u)
     session.commit()
+
+    room_obj = session.query(Room).get((room, room_name))
+    room_users = []
+    the_room = {}
+    for r_user in room_obj.user:
+        room_users.append(session.query(User.name).filter(User.id == r_user.user_id).one()[0])
+    for r_user in room_obj.user:
+        if r_user.user_id == user:
+            the_room = dict(room_name=room_obj.name,
+                            perm=session.query(Perm.id, Perm.name, Perm.add_user, Perm.create_room,
+                                               Perm.create_vote, Perm.delete_room, Perm.delete_user,
+                                               Perm.delete_vote, Perm.make_secure, Perm.make_unsecure,
+                                               Perm.voting, Perm.edit_perm, Perm.edit_perm_def).filter(
+                                Perm.id == r_user.perm_id).one().__dict__,
+                            users=room_users)
+    add_user_obj = {"user_name": uname, "room": the_room}
+
     session.close()
+    return add_user_obj

@@ -32,7 +32,7 @@ class LoginForm:
         self.password.bind('<Return>', self.focus_change)
         self.button_ok = Button(self.lf, text="Enter", command=self.send_data)
         self.button_cancel = Button(self.lf, text="Exit")
-        self.button_cancel.bind("<Button-1>", self.exit)
+        self.button_cancel.bind("<Button-1>", LoginForm.exit_login)
 
         self.title.grid(row=0, columnspan=4, pady=(0, 10))
         self.lab1.grid(row=1, sticky=W)
@@ -56,7 +56,8 @@ class LoginForm:
             self.lf.pack_forget()
             chat = ChatOpen(server_answer)
 
-    def exit(self, event):
+    @staticmethod
+    def exit_login(event):
         client.s.close()
         root.destroy()
 
@@ -76,38 +77,28 @@ class ChatOpen():
 
         data = client.json.loads(chat_data)
         self.chat = Frame(root)
-        self.chat.pack()
         self.note = ttk.Notebook(self.chat)
-        self.note.pack()
         self.user = data['user_name']
         self.chat_rooms = {}
 
         root.wm_title("myChat (" + self.user + ")")
 
         for room in data['user_rooms']:
-            tab_inner = Frame(self.note)
-            tab_inner.configure(bg='#ffffff')
-            chat_window = Text(tab_inner, font="Arial 10", foreground='#666666', width=100)
-            chat_window.tag_configure("user", foreground='#3399ff')
-            chat_input = Entry(tab_inner, textvariable=msg, font="Arial 10", width=80)
-            chat_send = Button(tab_inner, text="Send", relief=GROOVE, bd=1, bg="#19b3e5",
-                               foreground='#ffffff', activebackground='#6cfcb3')
-            chat_window.grid(row=0, column=1, columnspan=2)
-            chat_input.grid(row=1, column=1, sticky=W + E + N + S)
-            chat_send.grid(row=1, column=2, sticky=W + E + N + S)
-            chat_send.bind('<Button-1>', self.send_process)
-            chat_input.bind('<Return>', self.send_process)
-            temp_list = room['users']
-            temp_list.pop(self.user)
-            user_list = UserList(tab_inner, str(room['room_name']), room['perm'], temp_list, self.user)
-            user_list.grid(row=0, column=0, rowspan=2, sticky=W + N)
+            self.add_room(self.user, room)
 
-            self.chat_rooms.update(
-                {room['room_name']: {'instance': tab_inner, 'perm': room['perm'], 'text': chat_window,
-                                     'user_list': user_list}})
+        self.note.pack()
+        self.chat.pack()
 
-            self.note.add(tab_inner, text=room['room_name'])
-            chat_input.focus_set()
+    def add_user_to_the_room(self, user, room):
+        if self.user == user:
+            self.add_room(self.user, room)
+        else:
+            room_inst = self.get_room(str(room['room_name']))
+            room_users = room_inst.get('user_list')
+            assert isinstance(room_users, UserList)
+            user = {user: room['users'][user]}
+            room_users.user_add(user)
+
 
     def send_process(self, event):
         """ Function which using for form message package and sent it to the chat server."""
@@ -148,6 +139,34 @@ class ChatOpen():
         room = self.get_room(room_name)
         room_users = room.get('user_list')
         room_users.kick_user(user)
+        print self.user == user
+        if self.user == user:
+            self.note.forget(room['instance'])
+
+    def add_room(self, user, room):
+            tab_inner = Frame(self.note)
+            tab_inner.configure(bg='#ffffff')
+            chat_window = Text(tab_inner, font="Arial 10", foreground='#666666', width=100)
+            chat_window.tag_configure("user", foreground='#3399ff')
+            chat_input = Entry(tab_inner, textvariable=msg, font="Arial 10", width=80)
+            chat_send = Button(tab_inner, text="Send", relief=GROOVE, bd=1, bg="#19b3e5",
+                               foreground='#ffffff', activebackground='#6cfcb3')
+            chat_window.grid(row=0, column=1, columnspan=2)
+            chat_input.grid(row=1, column=1, sticky=W + E + N + S)
+            chat_send.grid(row=1, column=2, sticky=W + E + N + S)
+            chat_send.bind('<Button-1>', self.send_process)
+            chat_input.bind('<Return>', self.send_process)
+            temp_list = room['users']
+            temp_list.pop(self.user)
+            user_list = UserList(tab_inner, str(room['room_name']), room['perm'], temp_list, self.user)
+            user_list.grid(row=0, column=0, rowspan=2, sticky=W + N)
+            self.chat_rooms.update(
+                {room['room_name']: {'instance': tab_inner, 'perm': room['perm'], 'text': chat_window,
+                                     'user_list': user_list}})
+
+            self.note.add(tab_inner, text=room['room_name'])
+
+            chat_input.focus_set()
 
 
 def loop_process():
@@ -171,6 +190,10 @@ def loop_process():
         elif server_answer['operation'] == 'kick_user':
             if isinstance(chat, ChatOpen):
                 chat.kick_user(server_answer['user'], server_answer['room'])
+
+        elif server_answer['operation'] == 'add_user':
+            if isinstance(chat, ChatOpen):
+                chat.add_user_to_the_room(server_answer['user'], server_answer['room'])
 
     except:
         root.after(1, loop_process)
