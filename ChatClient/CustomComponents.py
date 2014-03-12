@@ -42,6 +42,7 @@ class UserControl(Frame):
         self._address = user.get(user.keys()[0])
         self.parent = parent
         self.user_name = user.keys()[0]
+        self.create_vote_dialog = ''
 
         # setup configuration
         self.is_admin = ''
@@ -66,16 +67,14 @@ class UserControl(Frame):
         _is_admin()
 
         self.configure(bg='#ffffff')
-        self.create_vote = Button(self, image=self._cv, bg='white', bd=0)
+        self.create_vote = Button(self, image=self._cv, bg='white', bd=0, command=self.vote_create)
         self.delete_vote = Button(self, image=self._dv, bg='white', bd=0)
         self.edit_perm = Button(self, image=self._edit, bg='white', bd=0)
-        self.kick_user = Button(self, image=self._kick, bg='white', bd=0)
+        self.kick_user = Button(self, image=self._kick, bg='white', bd=0, command=self.delete_user)
         self.name = ''
         self.display_user()
 
-        self.kick_user.bind('<Button-1>', self.delete_user)
-
-    def delete_user(self, event):
+    def delete_user(self):
         client.s.send(json.dumps({'operation': 'kick_user', 'room': self.room, 'user': self.user_name}))
 
     def set_user_address(self, address):
@@ -130,6 +129,22 @@ class UserControl(Frame):
         else:
             self.name.configure(image=self._passive, compound="left")
             createToolTip(self.name, 'User Name: ' + self.name.cget("text") + '\nUser Status: offline')
+
+    def vote_create(self):
+        self.create_vote_dialog = Toplevel(self)
+        info = Label(self.create_vote_dialog,
+                     text='Please type why do you want to kick user: ' + self.user_name + ' from this room:')
+        info.grid(row=0, column=0, columnspan=2)
+        reason = Entry(self.create_vote_dialog)
+        reason.grid(row=1, column=0, columnspan=2)
+        button_ok = Button(self.create_vote_dialog, text='Start', command=self.start_vote)
+        button_cancel = Button(self.create_vote_dialog, text='Cancel', command=self.create_vote_dialog.destroy)
+        button_ok.grid(row=2, column=0)
+        button_cancel.grid(row=2, column=1)
+
+    def start_vote(self):
+        client.s.send(json.dumps({'operation': 'start_vote', 'user': self.user_name, 'room': self.room}))
+        self.create_vote_dialog.destroy()
 
 
 class UserList(Frame):
@@ -205,6 +220,7 @@ class AddUser(Frame):
         self.users_found = self.users
         self.combo = ttk.Combobox(self, values=self.users_found, width=24)
         self.combo.bind('<FocusIn>', self.get_users)
+        self.combo.bind('<Button-1>', self.get_users)
         self.combo.bind('<KeyRelease>', self.autocomplete)
         self.add_button = Button(self, text='Add User', command=self.add_user, relief=RAISED, bd=0)
         self.combo.grid(row=0, column=0)
@@ -228,7 +244,7 @@ class AddUser(Frame):
 
     def get_users(self, event):
         self.combo.unbind('<FocusIn>')
-        client.s.send(json.dumps({'operation': 'get_users'}))
+        client.s.send(json.dumps({'operation': 'get_users', 'room': self.parent.room}))
 
         def take_answer():
             try:
@@ -275,6 +291,7 @@ class AddUser(Frame):
         client.s.send(json.dumps({'operation': 'add_user', 'user': self.add_dialog.name.cget('text'),
                                   'room': self.parent.room, 'perm': self.add_dialog.perms.get()}))
         self.add_dialog.destroy()
+        self.combo.set('')
 
 
 

@@ -35,7 +35,7 @@ class Room(Base):
     __tablename__ = 'room'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), primary_key=True)
+    name = Column(String(50), unique=True)
     auth = Column(Integer(1))
     password = Column(String(100))
     secure = Column(Integer(1))
@@ -47,13 +47,19 @@ class Room(Base):
         self.auth = 0
         self.secure = 0
 
+    def is_only_auth(self):
+        return self.auth
+
+    def is_secure(self):
+        return self.secure
+
 
 class User(Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
     registered = Column(Integer(1))
-    name = Column(String(255), primary_key=True)
+    name = Column(String(255), unique=True)
     password = Column(String(100))
     login = Column(String(70))
     vote = relationship("Vote")
@@ -69,7 +75,7 @@ class Perm(Base):
     __tablename__ = 'perm'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(255), primary_key=True)
+    name = Column(String(255), unique=True)
     create_room = Column(Integer(1))
     delete_room = Column(Integer(1))
     create_vote = Column(Integer(1))
@@ -103,18 +109,32 @@ class Perm(Base):
 class Vote(Base):
     __tablename__ = 'vote'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     room_id = Column(Integer, ForeignKey('room.id'))
     user_id = Column(Integer, ForeignKey('user.id'))
     summary_vote = Column(Integer)
+    vote_yes = Column(Integer)
+    vote_no = Column(Integer)
 
     def __init__(self, room_id, user_id):
         self.room_id = room_id
         self.user_id = user_id
-        self.summary_vote = 1
+        self.summary_vote = 0
+        self.vote_yes = 0
+        self.vote_no = 0
 
-    def __add_vote__(self):
-        self.summary_vote += 1
+    def __vote_yes__(self):
+        self.vote_yes += 1
+
+    def __vote_no__(self):
+        self.vote_no += 1
+
+    def get_result(self):
+        self.summary_vote = self.vote_yes - self.vote_no
+        if self.summary_vote > 0:
+            return True
+        else:
+            return False
 
 
 Session = sessionmaker()
@@ -204,7 +224,8 @@ def registration(login, name, password):
     user.password = hashlib.md5(password).hexdigest()
     auth_perm = session.query(Perm).filter(Perm.name == 'auth_user')
     room = session_reg.query(Room).filter(Room.name == 'default_room')
-    a = session_reg.query(Associations).filter(Associations.user_id == user.id and Associations.room_id == room.id).one()
+    a = session_reg.query(Associations).filter(
+        Associations.user_id == user.id and Associations.room_id == room.id).one()
     a.perm = auth_perm
     session.commit()
     session.close()
@@ -273,11 +294,17 @@ def kick_user(user, room):
     return assoc
 
 
-def get_users():
+def get_users(room_name):
     session_get_users = Session()
     users = []
-    for user in session_get_users.query(User.name).all():
-        users.append(user[0])
+    room = session_get_users.query(Room).filter(Room.name == room_name).one()
+    if room.is_only_auth():
+        for user in session_get_users.query(User.name).filter(User.registered == 1).all():
+            users.append(user[0])
+    else:
+        for user in session_get_users.query(User.name).all():
+            users.append(user[0])
+
     return users
     session_get_users.commit()
     session_get_users.close()
@@ -306,7 +333,7 @@ def add_u_to_the_r(uname, room_name, perm_name):
     session.add(new_u)
     session.commit()
 
-    room_obj = session.query(Room).get((room, room_name))
+    room_obj = session.query(Room).get(room)
     room_users = []
     the_room = {}
     for r_user in room_obj.user:
@@ -324,3 +351,45 @@ def add_u_to_the_r(uname, room_name, perm_name):
 
     session.close()
     return add_user_obj
+
+
+def create_vote(user_name, room_name):
+    session_vote = Session()
+    user = session_vote.query(User.id).filter(User.name == user_name).scalar()
+    room = session_vote.query(Room.id).filter(Room.name == room_name).scalar()
+    vote = Vote(room, user)
+    session_vote.add(vote)
+    session_vote.commit()
+    return vote.id
+    session_vote.close()
+
+
+def send_result_of_vote(vote_id):
+    print 'result of vote'
+    session_vote_res = Session()
+    vote = session_vote_res.query(Vote).get(vote_id)
+    result = vote.get_result()
+    session_vote_res.add(vote)
+    session_vote_res.commit()
+    session_vote_res.close()
+    return result
+
+
+def vote_yes(vote_id):
+    session_vote_yes = Session()
+    vote = session_vote_yes.query(Vote).get(id)
+    vote.__vote_yes__
+    session_vote_yes.add(vote)
+    session_vote_yes.commit()
+    session_vote_yes.close()
+
+
+def vote_no(vote_id):
+    session_vote_no = Session()
+    vote = session_vote_no.query(Vote).get(id)
+    vote.__vote_no__
+    session_vote_no.add(vote)
+    session_vote_no.commit()
+    session_vote_no.close()
+
+

@@ -194,6 +194,16 @@ def loop_process():
             if isinstance(chat, ChatOpen):
                 chat.add_user_to_the_room(server_answer['user'], server_answer['room'])
 
+        elif server_answer['operation'] == 'start_vote':
+            if isinstance(chat, ChatOpen):
+                print server_answer
+                #TODO: create functionality for start vote
+
+        elif server_answer['operation'] == 'vote_complete':
+            if isinstance(chat, ChatOpen):
+                print server_answer
+                #TODO: create functionality for end vote
+
     except:
         root.after(1, loop_process)
         return

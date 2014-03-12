@@ -13,6 +13,16 @@ import settings
 import db
 import json
 import sys
+import threading
+
+
+def vote_complete(vote_id, user_name, room_name):
+    print "vote complete"
+    auth(sock, json.dumps({'operation': 'vote_complete', 'user': user_name, 'room': room_name}))
+    broadcast_data(sock, json.dumps({'operation': 'vote_complete', 'user': user_name, 'room': room_name}))
+    if db.send_result_of_vote(vote_id):
+        auth(sock, json.dumps({'operation': 'kick_user', 'user': user_name, 'room': room_name}))
+        broadcast_data(sock, json.dumps({'operation': 'kick_user', 'user': user_name, 'room': room_name}))
 
 
 def auth(sock, data):
@@ -156,7 +166,7 @@ if __name__ == "__main__":
                                 auth(sock, kick)
 
                         elif "get_users" == user_data["operation"]:
-                            auth(sock, json.dumps({'operation': 'get_users', 'val': db.get_users()}))
+                            auth(sock, json.dumps({'operation': 'get_users', 'val': db.get_users(user_data['room'])}))
 
                         elif "get_perms" == user_data["operation"]:
                             auth(sock, json.dumps({'operation': 'get_perms', 'val': db.get_perms()}))
@@ -171,6 +181,26 @@ if __name__ == "__main__":
                             update_user_info(room)
                             auth(sock, json.dumps({'operation': 'add_user', 'user': user, 'room': room}))
                             broadcast_data(sock, json.dumps({'operation': 'add_user', 'user': user, 'room': room}))
+
+                        elif "start_vote" == user_data["operation"]:
+                            user = user_data['user']
+                            room = user_data['room']
+                            vote = db.create_vote(user, room)
+                            if vote:
+                                start = json.dumps(
+                                    {'operation': user_data["operation"], 'user': user, 'room': room, 'vote': vote})
+
+                                auth(sock, start)
+                                broadcast_data(sock, start)
+
+                                def go():
+                                    vote_complete(vote, user, room)
+
+                                t = threading.Timer(60.0, go)
+                                t.start()
+                                print "start timer 60s..."
+
+
 
                 except:
                     e = sys.exc_info()[0]
