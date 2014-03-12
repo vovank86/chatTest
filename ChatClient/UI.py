@@ -139,7 +139,6 @@ class ChatOpen():
         room = self.get_room(room_name)
         room_users = room.get('user_list')
         room_users.kick_user(user)
-        print self.user == user
         if self.user == user:
             self.note.forget(room['instance'])
 
