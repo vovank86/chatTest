@@ -7,12 +7,12 @@ import socket
 import select
 import sys
 import json
-import settings
+from settings import CLIENT_SOCKET
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = settings.CLIENT_SOCKET['HOST']
-port = settings.CLIENT_SOCKET['PORT']
-buf = settings.CLIENT_SOCKET['BUFFER_SIZE']
+host = CLIENT_SOCKET['HOST']
+port = CLIENT_SOCKET['PORT']
+buf = CLIENT_SOCKET['BUFFER_SIZE']
 
 
 def connect(user_data):

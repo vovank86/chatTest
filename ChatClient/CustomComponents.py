@@ -10,6 +10,11 @@ import client
 import json
 import ttk
 import threading
+from settings import FONT_MULTIPLIER
+
+font8 = str(int(8 * FONT_MULTIPLIER))
+font10 = str(int(10 * FONT_MULTIPLIER))
+font20 = str(int(20 * FONT_MULTIPLIER))
 
 #TODO: special functionality for edit permissions
 #TODO: make logic for work with server (add update user list after add new user, add functionality for voting)
@@ -136,7 +141,7 @@ class UserControl(Frame):
 
         self.name = Label(self, text=' ' + self.user_name, bg='#ffffff', fg='#666666', width=150, anchor=W,
                           justify=LEFT,
-                          font="Arial 8")
+                          font="Arial " + font8)
 
         self.name.grid(row=0, sticky=W + E + N + S)
 
@@ -302,20 +307,30 @@ class AddUser(Frame):
         self.combo.unbind('<FocusIn>')
         client.s.send(json.dumps({'operation': 'get_users', 'room': self.parent.room}))
 
-        def take_answer():
-            try:
-                sa = client.s.recv(client.buf)
-                sa = json.loads(sa)
-                if sa['operation'] == 'get_users':
-                    self.users = sa['val']
-                    self.users_found = self.users
-                    self.combo['values'] = self.users_found
+        if event.widget.cget('state').__str__() != 'disabled':
+            def take_answer():
+                try:
+                    sa = client.s.recv(client.buf)
+                    sa = json.loads(sa)
+                    if sa['operation'] == 'get_users':
+                        if sa['val']:
+                            self.combo.config(state='normal')
+                            self.add_button.config(state='normal')
+                            self.users = sa['val']
+                            self.users_found = self.users
+                            self.combo['values'] = self.users_found
+                        else:
+                            self.combo.config(state='disabled')
+                            self.add_button.config(state='disabled')
 
-            except:
-                take_answer()
-                return
+                except:
+                    take_answer()
+                    return
 
-        take_answer()
+            take_answer()
+
+
+
 
     def get_perms(self, event):
         self.add_dialog.perms.unbind('<FocusIn>')

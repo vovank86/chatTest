@@ -9,8 +9,13 @@ import ttk
 import client
 import hashlib
 import json
+from settings import FONT_MULTIPLIER
 
 #TODO: configure the Chat view using CustomComponents and grid
+
+font10 = str(int(10 * FONT_MULTIPLIER))
+font20 = str(int(20 * FONT_MULTIPLIER))
+
 
 
 class LoginForm:
@@ -23,11 +28,11 @@ class LoginForm:
 
         self.lf = Frame(root, padx=5, pady=5)
         self.lf.pack()
-        self.title = Label(self.lf, text="myChat", font="Verdana 20")
-        self.lab1 = Label(self.lf, text="Login:", font="Arial 10")
+        self.title = Label(self.lf, text="myChat", font="Verdana " + font20)
+        self.lab1 = Label(self.lf, text="Login:", font="Arial " + font10)
         self.user_name = Entry(self.lf, width=20, bd=1)
         self.user_name.bind('<Return>', self.focus_change)
-        self.lab2 = Label(self.lf, text="Password:", font="Arial 10")
+        self.lab2 = Label(self.lf, text="Password:", font="Arial " + font10)
         self.password = Entry(self.lf, width=20, bd=1, show="*")
         self.password.bind('<Return>', self.focus_change)
         self.button_ok = Button(self.lf, text="Enter", command=self.send_data)
@@ -144,9 +149,9 @@ class ChatOpen():
 
     def add_room(self, user, room):
         tab_inner = Frame(self.note, bg='#ffffff', bd=0)
-        chat_window = Text(tab_inner, font="Arial 10", foreground='#666666', width=100, borderwidth = 1, relief = SUNKEN)
+        chat_window = Text(tab_inner, font="Arial " + font10, foreground='#666666', width=100, borderwidth = 1, relief = SUNKEN)
         chat_window.tag_configure("user", foreground='#3399ff')
-        chat_input = Entry(tab_inner, textvariable=msg, font="Arial 10", width=80)
+        chat_input = Entry(tab_inner, textvariable=msg, font="Arial " + font10, width=80)
         chat_send = Button(tab_inner, text="Send", relief=GROOVE, bd=1, bg="#19b3e5",
                            foreground='#ffffff', activebackground='#6cfcb3')
         chat_window.grid(row=0, column=1, columnspan=2)

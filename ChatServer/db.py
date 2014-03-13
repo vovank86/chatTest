@@ -317,7 +317,11 @@ def get_users(room_name):
             if not user[0] in room_users:
                 users.append(user[0])
 
-    return users
+
+    if len(users) > 0:
+        return users
+    else:
+        return False
     session_get_users.commit()
     session_get_users.close()
 
