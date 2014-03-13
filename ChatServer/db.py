@@ -38,7 +38,7 @@ class Room(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True)
     auth = Column(Integer(1))
-    password = Column(String(100))
+    password = Column(String(40))
     secure = Column(Integer(1))
     user = relationship("Associations", backref='room')
     vote = relationship("Vote")
@@ -60,9 +60,9 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     registered = Column(Integer(1))
-    name = Column(String(255), unique=True)
-    password = Column(String(100))
-    login = Column(String(70))
+    name = Column(String(50), unique=True)
+    password = Column(String(40))
+    login = Column(String(30))
     vote = relationship("Vote")
 
     def __init__(self, login, name, password, registered):
@@ -76,7 +76,7 @@ class Perm(Base):
     __tablename__ = 'perm'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(255), unique=True)
+    name = Column(String(20), unique=True)
     create_room = Column(Integer(1))
     delete_room = Column(Integer(1))
     create_vote = Column(Integer(1))
@@ -116,8 +116,8 @@ class Vote(Base):
     summary_vote = Column(Integer)
     vote_yes = Column(Integer)
     vote_no = Column(Integer)
-    start_time = Column(String)
-    end_time = Column(String)
+    start_time = Column(String(40))
+    end_time = Column(String(40))
 
     def __init__(self, room_id, user_id):
         self.room_id = room_id
@@ -304,12 +304,18 @@ def get_users(room_name):
     session_get_users = Session()
     users = []
     room = session_get_users.query(Room).filter(Room.name == room_name).one()
+    room_users = []
+    for assoc in room.user:
+        room_users.append(session_get_users.query(User).get(assoc.user_id).name)
+
     if room.is_only_auth():
         for user in session_get_users.query(User.name).filter(User.registered == 1).all():
-            users.append(user[0])
+            if not user[0] in room_users:
+                users.append(user[0])
     else:
         for user in session_get_users.query(User.name).all():
-            users.append(user[0])
+            if not user[0] in room_users:
+                users.append(user[0])
 
     return users
     session_get_users.commit()

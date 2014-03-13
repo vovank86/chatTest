@@ -21,9 +21,6 @@ class UserControl(Frame):
         Frame.__init__(self, parent, **options)
         assert isinstance(perm, dict)
         assert isinstance(room_name, str)
-        self.vote_control_width = 64
-
-        self.label_width = 218 + self.vote_control_width
 
         # Import images
         _img_act = Image.open(os.path.dirname(__file__) + "/img/active.gif").resize((20, 20), Image.ANTIALIAS)
@@ -97,44 +94,35 @@ class UserControl(Frame):
 
     def display_user(self):
         if self.perm['create_vote'] and self.is_admin != 'True':
-            self.label_width -= 17
             self.create_vote.grid(row=0, column=2)
             createToolTip(self.create_vote, 'Create vote for kick this user from the room')
 
         if self.perm['delete_vote'] and self.is_admin != 'True':
-            self.label_width -= 17
             self.delete_vote.grid(row=0, column=3)
             createToolTip(self.delete_vote, 'Delete vote for save this user in the room')
 
         if self.room != 'default':
             if self.perm['edit_perm']:
-                self.label_width -= 17
                 self.edit_perm.grid(row=0, column=4)
         else:
             if self.perm['edit_perm'] and self.perm['edit_perm_def']:
-                self.label_width -= 17
                 self.edit_perm.grid(row=0, column=4)
 
         createToolTip(self.edit_perm, 'Edit permissions for this user')
 
         if self.room != 'default':
             if self.perm['delete_user']:
-                self.label_width -= 17
                 self.kick_user.grid(row=0, column=5)
         else:
             if self.perm['delete_user'] and self.perm['edit_perm_def']:
-                self.label_width -= 17
                 self.kick_user.grid(row=0, column=5)
             elif self.perm['delete_user'] and self.is_admin != 'True':
-                self.label_width -= 17
                 self.kick_user.grid(row=0, column=5)
 
         createToolTip(self.kick_user, 'Kick this user')
 
         if self.vote_id != '':
             self.create_vote.config(state='disabled')
-            self.label_width = int(self.name.cget('width').__str__()) - self.vote_control_width
-            self.name.configure(width=self.label_width)
             self.voting_controls.grid(row=0, column=6, columnspan=3, padx=(0, 2))
             self.vote_yes.grid(row=0, column=1, padx=(2, 0))
             createToolTip(self.vote_yes,
@@ -146,7 +134,7 @@ class UserControl(Frame):
             self.vote_timer_label.grid(row=0, column=3, padx=(2, 2))
             createToolTip(self.vote_timer_label, 'remaining time')
 
-        self.name = Label(self, text=' ' + self.user_name, bg='#ffffff', fg='#666666', width=self.label_width, anchor=W,
+        self.name = Label(self, text=' ' + self.user_name, bg='#ffffff', fg='#666666', width=150, anchor=W,
                           justify=LEFT,
                           font="Arial 8")
 
@@ -177,6 +165,7 @@ class UserControl(Frame):
         self.create_vote_dialog.destroy()
 
     def voting(self, vote_id, reason):
+        self.vote_timer = 60
         self.vote_id = vote_id
         self.vote_reason = reason
         self.display_user()
@@ -197,8 +186,6 @@ class UserControl(Frame):
 
     def voting_complete(self):
         self.vote_id = ''
-        self.label_width = int(self.name.cget('width').__str__()) + self.vote_control_width
-        self.name.configure(width=self.label_width)
         self.vote_yes.grid_forget()
         self.vote_no.grid_forget()
         self.voting_controls.grid_forget()
@@ -259,7 +246,7 @@ class UserList(Frame):
         self.users[user] = ul_user
         if len(self.users) > 0 and informer_packed:
             self.user_empty_informer.pack_forget()
-        ul_user.pack(pady=(0, 1), padx=(0, 0))
+        ul_user.pack(pady=(0, 1), padx=(0, 0), fill=BOTH, expand=1)
 
     def kick_user(self, user):
         if user in self.users:
