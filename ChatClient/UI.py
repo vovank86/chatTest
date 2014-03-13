@@ -143,9 +143,8 @@ class ChatOpen():
             self.note.forget(room['instance'])
 
     def add_room(self, user, room):
-        tab_inner = Frame(self.note)
-        tab_inner.configure(bg='#ffffff')
-        chat_window = Text(tab_inner, font="Arial 10", foreground='#666666', width=100)
+        tab_inner = Frame(self.note, bg='#ffffff', bd=0)
+        chat_window = Text(tab_inner, font="Arial 10", foreground='#666666', width=100, borderwidth = 1, relief = SUNKEN)
         chat_window.tag_configure("user", foreground='#3399ff')
         chat_input = Entry(tab_inner, textvariable=msg, font="Arial 10", width=80)
         chat_send = Button(tab_inner, text="Send", relief=GROOVE, bd=1, bg="#19b3e5",

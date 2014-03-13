@@ -208,7 +208,7 @@ class UserList(Frame):
         self.user_empty_informer = Label(self, text='Now this room doesn\'t has any users! '
                                                     '\n But if you are owner of this room,  than \nyou can add users.',
                                          justify='center',
-                                         bg='#ffffff', width=31, height=20, foreground='#cccccc')
+                                         bg='#ffffff', foreground='#cccccc', height=10)
 
         self.add_user = AddUser(self)
         if perm['add_user']:
@@ -222,7 +222,7 @@ class UserList(Frame):
         self.add_user_dialog = ''
 
         if self.users == {}:
-            self.user_empty_informer.pack(fill=BOTH, expand=1)
+            self.user_empty_informer.pack(fill=BOTH, expand=1, padx=(0, 0), pady=(0, 0))
 
     def _add_user(self):
         self.add_user_dialog = Toplevel(self)
