@@ -17,13 +17,17 @@ import threading
 
 
 def vote_complete(vote_id, user_name, room_name):
-    print "vote complete"
-    auth(sock, json.dumps({'operation': 'vote_complete', 'user': user_name, 'room': room_name}))
-    broadcast_data(sock, json.dumps({'operation': 'vote_complete', 'user': user_name, 'room': room_name}))
-    if db.send_result_of_vote(vote_id):
-        auth(sock, json.dumps({'operation': 'kick_user', 'user': user_name, 'room': room_name}))
-        broadcast_data(sock, json.dumps({'operation': 'kick_user', 'user': user_name, 'room': room_name}))
+    def go():
+        print "vote complete" + str(vote_id)
+        auth(sock, json.dumps({'operation': 'vote_complete', 'user': user_name, 'room': room_name}))
+        broadcast_data(sock, json.dumps({'operation': 'vote_complete', 'user': user_name, 'room': room_name}))
+        if db.send_result_of_vote(vote_id):
+            auth(sock, json.dumps({'operation': 'kick_user', 'user': user_name, 'room': room_name}))
+            broadcast_data(sock, json.dumps({'operation': 'kick_user', 'user': user_name, 'room': room_name}))
 
+    t = threading.Timer(60.0, go)
+    t.start()
+    print "start timer 60s..."
 
 def auth(sock, data):
     for socket in CONNECTION_LIST:
@@ -188,17 +192,20 @@ if __name__ == "__main__":
                             vote = db.create_vote(user, room)
                             if vote:
                                 start = json.dumps(
-                                    {'operation': user_data["operation"], 'user': user, 'room': room, 'vote': vote})
+                                    {'operation': user_data["operation"], 'user': user, 'room': room, 'vote': vote, 'reason': user_data['reason']})
 
                                 auth(sock, start)
                                 broadcast_data(sock, start)
+                                vote_complete(vote, user, room)
 
-                                def go():
-                                    vote_complete(vote, user, room)
 
-                                t = threading.Timer(60.0, go)
-                                t.start()
-                                print "start timer 60s..."
+
+                        elif 'voting' == user_data["operation"]:
+                            vote_id = user_data['vote']
+                            if user_data['val']:
+                                db.vote_yes(vote_id)
+                            else:
+                                db.vote_no(vote_id)
 
 
 

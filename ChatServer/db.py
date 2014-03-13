@@ -11,6 +11,7 @@ from getpass import *
 import hashlib
 import sys
 import settings
+import time
 
 if sys.platform == 'win32':
     database = settings.DATABASES['default']
@@ -115,6 +116,8 @@ class Vote(Base):
     summary_vote = Column(Integer)
     vote_yes = Column(Integer)
     vote_no = Column(Integer)
+    start_time = Column(String)
+    end_time = Column(String)
 
     def __init__(self, room_id, user_id):
         self.room_id = room_id
@@ -122,6 +125,8 @@ class Vote(Base):
         self.summary_vote = 0
         self.vote_yes = 0
         self.vote_no = 0
+        self.start_time = time.strftime("%d %b %Y %H:%M:%S %Z", time.localtime())
+        self.end_time = ''
 
     def __vote_yes__(self):
         self.vote_yes += 1
@@ -130,6 +135,7 @@ class Vote(Base):
         self.vote_no += 1
 
     def get_result(self):
+        self.end_time = time.strftime("%d %b %Y %H:%M:%S %Z", time.localtime())
         self.summary_vote = self.vote_yes - self.vote_no
         if self.summary_vote > 0:
             return True
@@ -169,7 +175,7 @@ def install_chat(session, PORT):
     root_perm = Perm("root", 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
     admin_perm = Perm("admin", 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0)
     authorised_perm = Perm("auth_user", 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0)
-    guest_perm = Perm("guest", 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0)
+    guest_perm = Perm("guest", 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 
     default_room = Room("default")
     a = Associations()
@@ -377,8 +383,8 @@ def send_result_of_vote(vote_id):
 
 def vote_yes(vote_id):
     session_vote_yes = Session()
-    vote = session_vote_yes.query(Vote).get(id)
-    vote.__vote_yes__
+    vote = session_vote_yes.query(Vote).get(vote_id)
+    vote.__vote_yes__()
     session_vote_yes.add(vote)
     session_vote_yes.commit()
     session_vote_yes.close()
@@ -386,8 +392,8 @@ def vote_yes(vote_id):
 
 def vote_no(vote_id):
     session_vote_no = Session()
-    vote = session_vote_no.query(Vote).get(id)
-    vote.__vote_no__
+    vote = session_vote_no.query(Vote).get(vote_id)
+    vote.__vote_no__()
     session_vote_no.add(vote)
     session_vote_no.commit()
     session_vote_no.close()

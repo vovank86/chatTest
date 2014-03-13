@@ -143,29 +143,41 @@ class ChatOpen():
             self.note.forget(room['instance'])
 
     def add_room(self, user, room):
-            tab_inner = Frame(self.note)
-            tab_inner.configure(bg='#ffffff')
-            chat_window = Text(tab_inner, font="Arial 10", foreground='#666666', width=100)
-            chat_window.tag_configure("user", foreground='#3399ff')
-            chat_input = Entry(tab_inner, textvariable=msg, font="Arial 10", width=80)
-            chat_send = Button(tab_inner, text="Send", relief=GROOVE, bd=1, bg="#19b3e5",
-                               foreground='#ffffff', activebackground='#6cfcb3')
-            chat_window.grid(row=0, column=1, columnspan=2)
-            chat_input.grid(row=1, column=1, sticky=W + E + N + S)
-            chat_send.grid(row=1, column=2, sticky=W + E + N + S)
-            chat_send.bind('<Button-1>', self.send_process)
-            chat_input.bind('<Return>', self.send_process)
-            temp_list = room['users']
-            temp_list.pop(self.user)
-            user_list = UserList(tab_inner, str(room['room_name']), room['perm'], temp_list, self.user)
-            user_list.grid(row=0, column=0, rowspan=2, sticky=W + N)
-            self.chat_rooms.update(
-                {room['room_name']: {'instance': tab_inner, 'perm': room['perm'], 'text': chat_window,
-                                     'user_list': user_list}})
+        tab_inner = Frame(self.note)
+        tab_inner.configure(bg='#ffffff')
+        chat_window = Text(tab_inner, font="Arial 10", foreground='#666666', width=100)
+        chat_window.tag_configure("user", foreground='#3399ff')
+        chat_input = Entry(tab_inner, textvariable=msg, font="Arial 10", width=80)
+        chat_send = Button(tab_inner, text="Send", relief=GROOVE, bd=1, bg="#19b3e5",
+                           foreground='#ffffff', activebackground='#6cfcb3')
+        chat_window.grid(row=0, column=1, columnspan=2)
+        chat_input.grid(row=1, column=1, sticky=W + E + N + S)
+        chat_send.grid(row=1, column=2, sticky=W + E + N + S)
+        chat_send.bind('<Button-1>', self.send_process)
+        chat_input.bind('<Return>', self.send_process)
+        temp_list = room['users']
+        temp_list.pop(self.user)
+        user_list = UserList(tab_inner, str(room['room_name']), room['perm'], temp_list, self.user)
+        user_list.grid(row=0, column=0, rowspan=2, sticky=W + N)
+        self.chat_rooms.update(
+            {room['room_name']: {'instance': tab_inner, 'perm': room['perm'], 'text': chat_window,
+                                 'user_list': user_list}})
 
-            self.note.add(tab_inner, text=room['room_name'])
+        self.note.add(tab_inner, text=room['room_name'])
 
-            chat_input.focus_set()
+        chat_input.focus_set()
+
+    def voting(self, user_name, room_name, vote_id, reason):
+        room = self.get_room(room_name)
+        room_users = room.get('user_list')
+        assert isinstance(room_users, UserList)
+        room_users.voting(user_name, vote_id, reason)
+
+    def voting_complete(self, user_name, room_name):
+        room = self.get_room(room_name)
+        room_users = room.get('user_list')
+        assert isinstance(room_users, UserList)
+        room_users.voting_complete(user_name)
 
 
 def loop_process():
@@ -173,40 +185,45 @@ def loop_process():
     client.s.setblocking(False)
     global server_answer
     try:
-        server_answer = client.s.recv(client.buf)
-        server_answer = json.loads(server_answer)
-        if server_answer['operation'] == 'send_mess':
-            if isinstance(chat, ChatOpen):
-                room = chat.get_room(server_answer['room'])
-                user = server_answer['user']
-                room['text'].insert(END, user, 'user')
-                room['text'].insert(END, ': ' + server_answer['text'] + '\n')
+        sa = client.s.recv(client.buf)
+        sa = re.sub('\}\{', '};{', sa)
+        sa = re.split(';', sa)
 
-        elif server_answer['operation'] == 'change_user_status':
-            if isinstance(chat, ChatOpen):
-                chat.change_user_state(server_answer['users'])
+        for server_answer in sa:
+            server_answer = json.loads(server_answer)
+            if server_answer['operation'] == 'send_mess':
+                if isinstance(chat, ChatOpen):
+                    room = chat.get_room(server_answer['room'])
+                    user = server_answer['user']
+                    room['text'].insert(END, user, 'user')
+                    room['text'].insert(END, ': ' + server_answer['text'] + '\n')
 
-        elif server_answer['operation'] == 'kick_user':
-            if isinstance(chat, ChatOpen):
-                chat.kick_user(server_answer['user'], server_answer['room'])
+            elif server_answer['operation'] == 'change_user_status':
+                if isinstance(chat, ChatOpen):
+                    chat.change_user_state(server_answer['users'])
 
-        elif server_answer['operation'] == 'add_user':
-            if isinstance(chat, ChatOpen):
-                chat.add_user_to_the_room(server_answer['user'], server_answer['room'])
+            elif server_answer['operation'] == 'kick_user':
+                if isinstance(chat, ChatOpen):
+                    chat.kick_user(server_answer['user'], server_answer['room'])
 
-        elif server_answer['operation'] == 'start_vote':
-            if isinstance(chat, ChatOpen):
-                print server_answer
-                #TODO: create functionality for start vote
+            elif server_answer['operation'] == 'add_user':
+                if isinstance(chat, ChatOpen):
+                    chat.add_user_to_the_room(server_answer['user'], server_answer['room'])
 
-        elif server_answer['operation'] == 'vote_complete':
-            if isinstance(chat, ChatOpen):
-                print server_answer
-                #TODO: create functionality for end vote
+            elif server_answer['operation'] == 'start_vote':
+                if isinstance(chat, ChatOpen):
+                    print server_answer
+                    chat.voting(server_answer['user'], server_answer['room'], server_answer['vote'], server_answer['reason'])
+
+            elif server_answer['operation'] == 'vote_complete':
+                if isinstance(chat, ChatOpen):
+                    print server_answer
+                    chat.voting_complete(server_answer['user'], server_answer['room'])
 
     except:
         root.after(1, loop_process)
         return
+
     root.after(1, loop_process)
     return
 

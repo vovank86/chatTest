@@ -9,6 +9,7 @@ from ToolTip import createToolTip
 import client
 import json
 import ttk
+import threading
 
 #TODO: special functionality for edit permissions
 #TODO: make logic for work with server (add update user list after add new user, add functionality for voting)
@@ -20,8 +21,9 @@ class UserControl(Frame):
         Frame.__init__(self, parent, **options)
         assert isinstance(perm, dict)
         assert isinstance(room_name, str)
+        self.vote_control_width = 64
 
-        self.label_width = 218
+        self.label_width = 218 + self.vote_control_width
 
         # Import images
         _img_act = Image.open(os.path.dirname(__file__) + "/img/active.gif").resize((20, 20), Image.ANTIALIAS)
@@ -30,6 +32,8 @@ class UserControl(Frame):
         _img_dv = Image.open(os.path.dirname(__file__) + "/img/del_vote.gif").resize((15, 15), Image.ANTIALIAS)
         _img_edit = Image.open(os.path.dirname(__file__) + "/img/edit_perm.gif").resize((15, 15), Image.ANTIALIAS)
         _img_kick = Image.open(os.path.dirname(__file__) + "/img/kick.gif").resize((15, 15), Image.ANTIALIAS)
+        _img_yes = Image.open(os.path.dirname(__file__) + "/img/yes.gif").resize((15, 15), Image.ANTIALIAS)
+        _img_no = Image.open(os.path.dirname(__file__) + "/img/no.gif").resize((15, 15), Image.ANTIALIAS)
 
         self.room = room_name
         self._active = ImageTk.PhotoImage(_img_act)
@@ -39,10 +43,15 @@ class UserControl(Frame):
         self._dv = ImageTk.PhotoImage(_img_dv)
         self._edit = ImageTk.PhotoImage(_img_edit)
         self._kick = ImageTk.PhotoImage(_img_kick)
+        self._yes = ImageTk.PhotoImage(_img_yes)
+        self._no = ImageTk.PhotoImage(_img_no)
         self._address = user.get(user.keys()[0])
         self.parent = parent
         self.user_name = user.keys()[0]
         self.create_vote_dialog = ''
+        self.vote_id = ''
+        self.vote_reason = ''
+        self.vote_timer = 60
 
         # setup configuration
         self.is_admin = ''
@@ -72,6 +81,11 @@ class UserControl(Frame):
         self.edit_perm = Button(self, image=self._edit, bg='white', bd=0)
         self.kick_user = Button(self, image=self._kick, bg='white', bd=0, command=self.delete_user)
         self.name = ''
+        self.voting_controls = Frame(self, bg='#f4f2f1', bd=0)
+        self.vote_yes = Button(self.voting_controls, image=self._yes, bg='white', bd=0, command=self._vote_yes)
+        self.vote_timer_label = Label(self.voting_controls, text=self.vote_timer, width=2)
+        self.vote_no = Button(self.voting_controls, image=self._no, bg='white', bd=0, command=self._vote_no)
+
         self.display_user()
 
     def delete_user(self):
@@ -117,6 +131,21 @@ class UserControl(Frame):
 
         createToolTip(self.kick_user, 'Kick this user')
 
+        if self.vote_id != '':
+            self.create_vote.config(state='disabled')
+            self.label_width = int(self.name.cget('width').__str__()) - self.vote_control_width
+            self.name.configure(width=self.label_width)
+            self.voting_controls.grid(row=0, column=6, columnspan=3, padx=(0, 2))
+            self.vote_yes.grid(row=0, column=1, padx=(2, 0))
+            createToolTip(self.vote_yes,
+                          'Click if you agree to kick this user according with reason.\nReason: ' + self.vote_reason)
+            self.vote_no.grid(row=0, column=2, padx=(1, 0))
+            createToolTip(self.vote_no,
+                          'Click if you disagree to kick this user according with reason.\nReason: ' + self.vote_reason)
+
+            self.vote_timer_label.grid(row=0, column=3, padx=(2, 2))
+            createToolTip(self.vote_timer_label, 'remaining time')
+
         self.name = Label(self, text=' ' + self.user_name, bg='#ffffff', fg='#666666', width=self.label_width, anchor=W,
                           justify=LEFT,
                           font="Arial 8")
@@ -135,16 +164,45 @@ class UserControl(Frame):
         info = Label(self.create_vote_dialog,
                      text='Please type why do you want to kick user: ' + self.user_name + ' from this room:')
         info.grid(row=0, column=0, columnspan=2)
-        reason = Entry(self.create_vote_dialog)
-        reason.grid(row=1, column=0, columnspan=2)
+        self.create_vote_dialog.reason = Entry(self.create_vote_dialog)
+        self.create_vote_dialog.reason.grid(row=1, column=0, columnspan=2)
         button_ok = Button(self.create_vote_dialog, text='Start', command=self.start_vote)
         button_cancel = Button(self.create_vote_dialog, text='Cancel', command=self.create_vote_dialog.destroy)
         button_ok.grid(row=2, column=0)
         button_cancel.grid(row=2, column=1)
 
     def start_vote(self):
-        client.s.send(json.dumps({'operation': 'start_vote', 'user': self.user_name, 'room': self.room}))
+        client.s.send(json.dumps({'operation': 'start_vote', 'user': self.user_name, 'room': self.room,
+                                  'reason': self.create_vote_dialog.reason.get()}))
         self.create_vote_dialog.destroy()
+
+    def voting(self, vote_id, reason):
+        self.vote_id = vote_id
+        self.vote_reason = reason
+        self.display_user()
+
+        def go():
+            self.vote_timer -= 1
+            self.vote_timer_label.configure(text=self.vote_timer)
+            if self.vote_timer > 0:
+                threading.Timer(1.0, go).start()
+
+        threading.Timer(1.0, go).start()
+
+    def _vote_yes(self):
+        client.s.send(json.dumps({'operation': 'voting', 'vote': self.vote_id, 'val': True}))
+
+    def _vote_no(self):
+        client.s.send(json.dumps({'operation': 'voting', 'vote': self.vote_id, 'val': False}))
+
+    def voting_complete(self):
+        self.vote_id = ''
+        self.label_width = int(self.name.cget('width').__str__()) + self.vote_control_width
+        self.name.configure(width=self.label_width)
+        self.vote_yes.grid_forget()
+        self.vote_no.grid_forget()
+        self.voting_controls.grid_forget()
+        self.create_vote.config(state='normal')
 
 
 class UserList(Frame):
@@ -209,6 +267,17 @@ class UserList(Frame):
             kicked_user.destroy()
             if len(self.users) == 0:
                 self.user_empty_informer.pack()
+
+    def voting(self, user_name, vote_id, reason):
+        if user_name in self.users:
+            user = self.users.get(user_name)
+            user.voting(vote_id, reason)
+
+    def voting_complete(self, user_name):
+        if user_name in self.users:
+            user = self.users.get(user_name)
+            assert isinstance(user, UserControl)
+            user.voting_complete()
 
 
 class AddUser(Frame):
