@@ -341,6 +341,31 @@ def get_perms(user_name):
     session_get_perms.close()
 
 
+def get_perm_for_user(user_name, room_name):
+    session_get_perm = Session()
+    room_id = session_get_perm.query(Room.id).filter(Room.name == room_name).scalar()
+    user_id = session_get_perm.query(User.id).filter(User.name == user_name).scalar()
+    perm = session_get_perm.query(Associations).filter(Associations.room_id == room_id, Associations.user_id == user_id).one()
+    perm = perm.perm.name
+    return perm
+
+
+def set_perm_for_user(user_name, room_name, perm_name):
+    session_set_perm = Session()
+    room_id = session_set_perm.query(Room.id).filter(Room.name == room_name).scalar()
+    user_id = session_set_perm.query(User.id).filter(User.name == user_name).scalar()
+    new_perm = session_set_perm.query(Perm.id).filter(Perm.name == perm_name).scalar()
+    perm = session_set_perm.query(Associations).filter(Associations.room_id == room_id, Associations.user_id == user_id).delete()
+    assoc = Associations()
+    assoc.user_id = user_id
+    assoc.room_id = room_id
+    assoc.perm_id = new_perm
+    session_set_perm.add(assoc)
+    session_set_perm.commit()
+    session_set_perm.close()
+    return perm
+
+
 def add_u_to_the_r(uname, room_name, perm_name):
     session = Session()
     new_u = Associations()

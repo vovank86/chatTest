@@ -176,6 +176,19 @@ if __name__ == "__main__":
                         elif "get_perms" == user_data["operation"]:
                             auth(sock, json.dumps({'operation': 'get_perms', 'val': db.get_perms(user_data['user'])}))
 
+                        elif "get_perm" == user_data["operation"]:
+                            auth(sock, json.dumps({'operation': 'get_perm',
+                                                   'val': db.get_perm_for_user(user_data['user'], user_data['room'])}))
+
+                        elif "set_perm" == user_data["operation"]:
+                            answer = db.set_perm_for_user(user_data['user'], user_data['room'], user_data['perm'])
+                            if answer:
+                                answer = json.dumps(
+                                    {'operation': 'send_mess', 'user': 'server message', 'room': user_data['room'],
+                                     'text': 'User "' + user_data['user'] + '" you permissions were changed by admin, so please quit from the chat and enter again!'})
+                                broadcast_data(sock, answer)
+
+
                         elif "add_user" == user_data["operation"]:
                             user = user_data['user']
                             room = user_data['room']

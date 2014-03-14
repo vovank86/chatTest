@@ -218,7 +218,68 @@ class UserControl(Frame):
 
     def _edit_perm(self):
         self.edit_perm_dialog = Toplevel(self)
-        i
+        self.edit_perm_dialog.title('Edit permissions for ' + self.user_name)
+        self.edit_perm_dialog.perm = ''
+        self.edit_perm_dialog.perms = ''
+        client.s.send(json.dumps({'operation': 'get_perm', 'user': self.user_name, 'room': self.room}))
+
+        def get_perm_for_user():
+            try:
+                sa = client.s.recv(client.buf)
+                print sa
+                sa = json.loads(sa)
+                print sa
+                if sa['operation'] == 'get_perm':
+                    print sa['val']
+                    self.edit_perm_dialog.perm = sa['val']
+
+            except:
+                get_perm_for_user()
+                return
+
+        get_perm_for_user()
+
+        Label(self.edit_perm_dialog, text='Permissions for user "' + self.user_name + '" now:').grid(row=0, column=0)
+        Label(self.edit_perm_dialog, text=self.edit_perm_dialog.perm, foreground='red').grid(row=0, column=1)
+
+        client.s.send(json.dumps({'operation': 'get_perms', 'user': self.user_name}))
+
+        def get_perms():
+            try:
+                sa = client.s.recv(client.buf)
+                sa = json.loads(sa)
+                if sa['operation'] == 'get_perms':
+                    self.edit_perm_dialog.perms = sa['val']
+
+            except:
+                get_perms()
+                return
+
+        get_perms()
+
+        Label(self.edit_perm_dialog, text='New permissions for user "' + self.user_name + '":').grid(row=1, column=0)
+        self.edit_perm_dialog.perms_combo = ttk.Combobox(self.edit_perm_dialog, values=self.edit_perm_dialog.perms)
+        self.edit_perm_dialog.perms_combo.current(self.edit_perm_dialog.perms.index(self.edit_perm_dialog.perm))
+        self.edit_perm_dialog.perms_combo.grid(row=1, column=1)
+        Button(self.edit_perm_dialog, text='OK', command=self.set_new_perm).grid(row=2, column=0)
+        Button(self.edit_perm_dialog, text='Cancel', command=self.edit_perm_dialog.destroy).grid(row=2, column=1)
+
+
+    def set_new_perm(self):
+        new_perm = self.edit_perm_dialog.perms_combo.get()
+        client.s.send(
+            json.dumps({'operation': 'set_perm', 'user': self.user_name, 'room': self.room, 'perm': new_perm}))
+        self.edit_perm_dialog.destroy()
+        if new_perm == 'admin':
+            self.is_admin = 'True'
+            self.create_vote.grid_forget()
+            self.delete_vote.grid_forget()
+        else:
+            self.is_admin = 'False'
+
+        self.display_user()
+
+
 
 class UserList(Frame):
     def __init__(self, parent, room_name, perm, user_list, user, **options):
@@ -383,12 +444,3 @@ class AddUser(Frame):
                                   'room': self.parent.room, 'perm': self.add_dialog.perms.get()}))
         self.add_dialog.destroy()
         self.combo.set('')
-
-
-
-
-
-
-
-
-
