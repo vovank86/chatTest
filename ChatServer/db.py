@@ -317,7 +317,6 @@ def get_users(room_name):
             if not user[0] in room_users:
                 users.append(user[0])
 
-
     if len(users) > 0:
         return users
     else:
@@ -326,11 +325,17 @@ def get_users(room_name):
     session_get_users.close()
 
 
-def get_perms():
+def get_perms(user_name):
     session_get_perms = Session()
+    user_reg = session_get_perms.query(User.registered).filter(User.name == user_name).scalar()
     perms = []
     for perm in session_get_perms.query(Perm.name).all():
-        perms.append(perm[0])
+        if perm[0] != 'root' and user_reg:
+            perms.append(perm[0])
+        elif perm[0] != 'root' and not user_reg:
+            if perm[0] == 'guest':
+                perms.append(perm[0])
+
     return perms
     session_get_perms.commit()
     session_get_perms.close()
@@ -407,5 +412,13 @@ def vote_no(vote_id):
     session_vote_no.add(vote)
     session_vote_no.commit()
     session_vote_no.close()
+
+
+def vote_cancel(vote_id):
+    session_vote_cancel = Session()
+    res = session_vote_cancel.query(Vote).filter(Vote.id == vote_id).delete()
+    session_vote_cancel.commit()
+    session_vote_cancel.close()
+    return res
 
 

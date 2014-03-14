@@ -29,6 +29,7 @@ def vote_complete(vote_id, user_name, room_name):
     t.start()
     print "start timer 60s..."
 
+
 def auth(sock, data):
     for socket in CONNECTION_LIST:
         if socket != server_socket and socket == sock:
@@ -173,7 +174,7 @@ if __name__ == "__main__":
                             auth(sock, json.dumps({'operation': 'get_users', 'val': db.get_users(user_data['room'])}))
 
                         elif "get_perms" == user_data["operation"]:
-                            auth(sock, json.dumps({'operation': 'get_perms', 'val': db.get_perms()}))
+                            auth(sock, json.dumps({'operation': 'get_perms', 'val': db.get_perms(user_data['user'])}))
 
                         elif "add_user" == user_data["operation"]:
                             user = user_data['user']
@@ -192,13 +193,12 @@ if __name__ == "__main__":
                             vote = db.create_vote(user, room)
                             if vote:
                                 start = json.dumps(
-                                    {'operation': user_data["operation"], 'user': user, 'room': room, 'vote': vote, 'reason': user_data['reason']})
+                                    {'operation': user_data["operation"], 'user': user, 'room': room, 'vote': vote,
+                                     'reason': user_data['reason']})
 
                                 auth(sock, start)
                                 broadcast_data(sock, start)
                                 vote_complete(vote, user, room)
-
-
 
                         elif 'voting' == user_data["operation"]:
                             vote_id = user_data['vote']
@@ -207,6 +207,14 @@ if __name__ == "__main__":
                             else:
                                 db.vote_no(vote_id)
 
+                        elif 'vote_cancel' == user_data["operation"]:
+                            vote_cancel = db.vote_cancel(user_data['vote'])
+                            if vote_cancel:
+                                vote_cancel = json.dumps(
+                                    {'operation': 'send_mess', 'user': 'server message', 'room': user_data['room'],
+                                     'text': 'Voting for kick "' + user_data['user'] + '" was canceled by admin.'})
+                                auth(sock, vote_cancel)
+                                broadcast_data(sock, vote_cancel)
 
 
                 except:

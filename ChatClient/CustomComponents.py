@@ -51,9 +51,11 @@ class UserControl(Frame):
         self.parent = parent
         self.user_name = user.keys()[0]
         self.create_vote_dialog = ''
+        self.edit_perm_dialog = ''
         self.vote_id = ''
         self.vote_reason = ''
         self.vote_timer = 60
+        self.timer_inst = ''
 
         # setup configuration
         self.is_admin = ''
@@ -79,8 +81,8 @@ class UserControl(Frame):
 
         self.configure(bg='#ffffff')
         self.create_vote = Button(self, image=self._cv, bg='white', bd=0, command=self.vote_create)
-        self.delete_vote = Button(self, image=self._dv, bg='white', bd=0)
-        self.edit_perm = Button(self, image=self._edit, bg='white', bd=0)
+        self.delete_vote = Button(self, image=self._dv, bg='white', bd=0, command=self.vote_delete)
+        self.edit_perm = Button(self, image=self._edit, bg='white', bd=0, command=self._edit_perm)
         self.kick_user = Button(self, image=self._kick, bg='white', bd=0, command=self.delete_user)
         self.name = ''
         self.voting_controls = Frame(self, bg='#f4f2f1', bd=0)
@@ -105,6 +107,8 @@ class UserControl(Frame):
         if self.perm['delete_vote'] and self.is_admin != 'True':
             self.delete_vote.grid(row=0, column=3)
             createToolTip(self.delete_vote, 'Delete vote for save this user in the room')
+            if self.vote_id == '':
+                self.delete_vote.config(state='disabled')
 
         if self.room != 'default':
             if self.perm['edit_perm']:
@@ -127,6 +131,9 @@ class UserControl(Frame):
         createToolTip(self.kick_user, 'Kick this user')
 
         if self.vote_id != '':
+            self.vote_yes.config(state='normal')
+            self.vote_no.config(state='normal')
+            self.delete_vote.config(state='normal')
             self.create_vote.config(state='disabled')
             self.voting_controls.grid(row=0, column=6, columnspan=3, padx=(0, 2))
             self.vote_yes.grid(row=0, column=1, padx=(2, 0))
@@ -179,23 +186,39 @@ class UserControl(Frame):
             self.vote_timer -= 1
             self.vote_timer_label.configure(text=self.vote_timer)
             if self.vote_timer > 0:
-                threading.Timer(1.0, go).start()
+                self.timer_inst = threading.Timer(1.0, go)
+                self.timer_inst.start()
 
-        threading.Timer(1.0, go).start()
+        self.timer_inst = threading.Timer(1.0, go)
+        self.timer_inst.start()
+
+    def vote_delete(self):
+        client.s.send(json.dumps({'operation': 'vote_cancel', 'vote': self.vote_id, 'user': self.user_name,
+                                  'room': self.room}))
+        self.voting_complete()
 
     def _vote_yes(self):
         client.s.send(json.dumps({'operation': 'voting', 'vote': self.vote_id, 'val': True}))
+        self.vote_yes.config(state='disabled')
+        self.vote_no.config(state='disabled')
 
     def _vote_no(self):
         client.s.send(json.dumps({'operation': 'voting', 'vote': self.vote_id, 'val': False}))
+        self.vote_yes.config(state='disabled')
+        self.vote_no.config(state='disabled')
 
     def voting_complete(self):
         self.vote_id = ''
+        self.delete_vote.config(state='disabled')
+        self.timer_inst.cancel()
         self.vote_yes.grid_forget()
         self.vote_no.grid_forget()
         self.voting_controls.grid_forget()
         self.create_vote.config(state='normal')
 
+    def _edit_perm(self):
+        self.edit_perm_dialog = Toplevel(self)
+        i
 
 class UserList(Frame):
     def __init__(self, parent, room_name, perm, user_list, user, **options):
@@ -329,12 +352,9 @@ class AddUser(Frame):
 
             take_answer()
 
-
-
-
     def get_perms(self, event):
         self.add_dialog.perms.unbind('<FocusIn>')
-        client.s.send(json.dumps({'operation': 'get_perms'}))
+        client.s.send(json.dumps({'operation': 'get_perms', 'user': self.add_dialog.name.cget('text')}))
 
         def take_answer():
             try:
