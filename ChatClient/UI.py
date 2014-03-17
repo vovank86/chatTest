@@ -38,22 +38,40 @@ class LoginForm:
         self.button_ok = Button(self.lf, text="Enter", command=self.send_data)
         self.button_cancel = Button(self.lf, text="Exit")
         self.button_cancel.bind("<Button-1>", LoginForm.exit_login)
+        self.user_type = IntVar()
+        self.q1 = Radiobutton(self.lf, text="Guest", variable=self.user_type, value=0, command=self.change_user_type).grid(row=0, column=4)
+        self.q2 = Radiobutton(self.lf, text="Normal", variable=self.user_type, value=1, command=self.change_user_type).grid(row=0, column=3)
 
-        self.title.grid(row=0, columnspan=4, pady=(0, 10))
+
+        self.title.grid(row=0, columnspan=2, pady=(0, 10))
         self.lab1.grid(row=1, sticky=W)
-        self.lab2.grid(row=2, sticky=W)
 
         self.user_name.grid(row=1, column=1, columnspan=3)
-        self.password.grid(row=2, column=1, columnspan=3)
+        self.change_user_type()
+
         self.button_ok.grid(row=4, columnspan=2, sticky=W + E + N + S, padx=(0, 2), pady=(30, 0))
         self.button_cancel.grid(row=4, columnspan=2, column=2, sticky=W + E + N + S, padx=(2, 0), pady=(30, 0))
 
         self.user_name.focus_set()
 
+    def change_user_type(self):
+        print 'change user type', self.user_type.get()
+
+        if self.user_type.get():
+            self.lab2.grid(row=2, sticky=W)
+            self.password.grid(row=2, column=1, columnspan=3)
+        else:
+            self.lab2.grid_forget()
+            self.password.grid_forget()
+
     def send_data(self):
         global server_answer, chat, chance
-        user_data = {"operation": "login", "user": self.user_name.get(),
-                     "password": hashlib.md5(self.password.get()).hexdigest()}
+        if self.user_type.get():
+            user_data = {"operation": "login", "user": self.user_name.get(),
+                     "password": hashlib.md5(self.password.get()).hexdigest(), 'type': 'normal'}
+        else:
+            user_data = {"operation": "login", "user": self.user_name.get(),
+                     "password": None, 'type': 'guest'}
         server_answer = client.connect(user_data)
         if not server_answer:
             root.destroy()

@@ -196,25 +196,43 @@ def install_chat(session, PORT):
     print "\nChat server started on port " + str(PORT)
 
 
-def auth_user(login, password):
+def auth_user(login, password, type):
     """
     @rtype : object
     """
     session = Session()
-    for instance in session.query(User).order_by(User.id):
-        #print instance
+    users = session.query(User).order_by(User.id)
+    users_logins = []
+    for instance in users:
+        users_logins.append(instance.login)
 
-        if login == instance.login:
+    for instance in users:
+        if login in users_logins and login == instance.login:
             user = instance
             if not check_pass(user, password):
                 return False
             else:
                 return start_sys(user, session)
+
+        elif not login in users_logins:
+            print 'start create new user'
+            if type == 'guest':
+                default_room = session.query(Room).filter(Room.name == 'default').one()
+                guest_perm = session.query(Perm).filter(Perm.name == 'guest').one()
+                a = Associations()
+                a.user = User(login, login, None, 0)
+                u = a.user
+                a.perm = guest_perm
+                default_room.user.append(a)
+                session.add(a)
+                session.commit()
+                return start_sys(u, session)
         else:
             continue
 
     session.commit()
     session.close()
+
 
 
 def check_pass(user, password):
@@ -265,13 +283,15 @@ def start_sys(user, session):
     """
 
     user_rooms = []
-
     rooms = session.query(Room).all()
     for room in rooms:
         room_users = []
         for r_user in room.user:
-            room_users.append(session.query(User.name).filter(User.id == r_user.user_id).one()[0])
+            room_users.append(session.query(User.name).filter(User.id == r_user.user_id).scalar())
+        print room_users
+
         for r_user in room.user:
+
             if r_user.user_id == user.id:
                 the_room = dict(room_name=room.name,
                                 perm=session.query(Perm.id, Perm.name, Perm.add_user, Perm.create_room,
@@ -284,6 +304,7 @@ def start_sys(user, session):
 
     start_chat_system = {"user_login": user.login, "user_name": user.name, "user_reg": user.registered,
                          "user_rooms": user_rooms}
+    print start_chat_system
 
     return start_chat_system
 

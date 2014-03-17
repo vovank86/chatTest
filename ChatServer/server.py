@@ -113,17 +113,18 @@ if __name__ == "__main__":
                     #In Windows, sometimes when a TCP program closes abruptly,
                     # a "Connection reset by peer" exception will be thrown
                     data = sock.recv(RECV_BUFFER)
+                    print data
                     if data:
                         user_data = json.loads(data)
                         print 'called server operation:', user_data["operation"]
                         if "login" == user_data["operation"]:
-                            if not db.auth_user(user_data['user'], user_data['password']):
+                            if not db.auth_user(user_data['user'], user_data['password'], user_data['type']):
                                 send_text = 'fail'
                                 print "Client (%s, %s) login wrong" % addr
                                 sock.close()
                                 CONNECTION_LIST.remove(sock)
                             else:
-                                base_data = db.auth_user(user_data['user'], user_data['password'])
+                                base_data = db.auth_user(user_data['user'], user_data['password'], user_data['type'])
 
                                 if users:
                                     if not base_data['user_name'] in users:
