@@ -205,7 +205,6 @@ def auth_user(login, password, type):
     users_logins = []
     for instance in users:
         users_logins.append(instance.login)
-
     for instance in users:
         if login in users_logins and login == instance.login:
             user = instance
@@ -215,7 +214,6 @@ def auth_user(login, password, type):
                 return start_sys(user, session)
 
         elif not login in users_logins:
-            print 'start create new user'
             if type == 'guest':
                 default_room = session.query(Room).filter(Room.name == 'default').one()
                 guest_perm = session.query(Perm).filter(Perm.name == 'guest').one()
@@ -260,13 +258,9 @@ def is_admin(uname, room):
     session_ia = Session()
 
     u = session_ia.query(User.id).filter(User.name == uname).scalar()
-    #print u
     r = session_ia.query(Room.id).filter(Room.name == room).scalar()
-    #print r
     p = session_ia.query(Associations.perm_id).filter(Associations.room_id == r, Associations.user_id == u).scalar()
-    #print p
     p_name = session_ia.query(Perm.name).filter(Perm.id == p).scalar()
-    #print p_name
 
     if p_name == 'admin' or p_name == 'root':
         return 'True'
@@ -288,7 +282,6 @@ def start_sys(user, session):
         room_users = []
         for r_user in room.user:
             room_users.append(session.query(User.name).filter(User.id == r_user.user_id).scalar())
-        print room_users
 
         for r_user in room.user:
 
@@ -304,7 +297,6 @@ def start_sys(user, session):
 
     start_chat_system = {"user_login": user.login, "user_name": user.name, "user_reg": user.registered,
                          "user_rooms": user_rooms}
-    print start_chat_system
 
     return start_chat_system
 
@@ -312,9 +304,7 @@ def start_sys(user, session):
 def kick_user(user, room):
     session_ku = Session()
     u = session_ku.query(User.id).filter(User.name == user).scalar()
-    #print u
     r = session_ku.query(Room.id).filter(Room.name == room).scalar()
-    #print r
     assoc = session_ku.query(Associations).filter(Associations.room_id == r, Associations.user_id == u).delete()
     session_ku.commit()
     session_ku.close()
@@ -432,7 +422,6 @@ def create_vote(user_name, room_name):
 
 
 def send_result_of_vote(vote_id):
-    print 'result of vote'
     session_vote_res = Session()
     vote = session_vote_res.query(Vote).get(vote_id)
     result = vote.get_result()
