@@ -165,7 +165,14 @@ if __name__ == "__main__":
 
                         elif "kick_user" == user_data["operation"]:
                             kick = db.kick_user(user_data["user"], user_data["room"])
-                            if kick:
+                            if isinstance(kick, list):
+                                print kick
+                                for k in kick:
+                                    print k
+                                    mes = json.dumps({'operation': 'kick_user', 'user': user_data["user"], 'room': k})
+                                    broadcast_data(sock, mes)
+                                    auth(sock, mes)
+                            elif kick:
                                 kick = json.dumps(
                                     {'operation': 'kick_user', 'user': user_data["user"], 'room': user_data["room"]})
                                 broadcast_data(sock, kick)

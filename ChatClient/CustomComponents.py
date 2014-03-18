@@ -125,8 +125,10 @@ class UserControl(Frame):
         else:
             if self.perm['delete_user'] and self.perm['edit_perm_def']:
                 self.kick_user.grid(row=0, column=5)
-            elif self.perm['delete_user'] and self.is_admin != 'True':
+            elif self.perm['delete_user'] and self.is_admin != 'True' and self.perm['edit_perm_def']:
                 self.kick_user.grid(row=0, column=5)
+            else:
+                pass
 
         createToolTip(self.kick_user, 'Kick this user')
 
@@ -280,7 +282,6 @@ class UserControl(Frame):
         self.display_user()
 
 
-
 class UserList(Frame):
     def __init__(self, parent, room_name, perm, user_list, user, **options):
         Frame.__init__(self, parent, **options)
@@ -317,16 +318,22 @@ class UserList(Frame):
         self.add_user_dialog = Toplevel(self)
 
     def change_user_state(self, user_list):
+        print user_list
         assert isinstance(user_list, dict)
         for user in user_list:
             if user in self.users:
                 self.users.get(user).set_user_address(user_list.get(user))
+            elif self.user != user:
+                print user
+                user = {user: user_list.get(user)}
+                self.user_add(user)
         for user in self.users:
             if not user in user_list:
                 self.users.get(user).set_user_address('')
 
     def user_add(self, user_info):
         user = user_info.keys()[0]
+        print user_info
         ul_user = UserControl(self, self.room, self.perm, user_info)
         if len(self.users) == 0:
             informer_packed = 1

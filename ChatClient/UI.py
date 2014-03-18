@@ -98,11 +98,24 @@ class ChatOpen():
         @rtype : object
         """
 
+        self.menu = Menu(root)
+        root.config(menu=self.menu)
+        fm = Menu(self.menu)
+        self.menu.add_cascade(label='File', menu=fm)
+
+
         data = client.json.loads(chat_data)
+        print data
+        if not data['user_reg']:
+            fm.add_command(label='Registration...', command=self.registration)
+
+        fm.add_command(label='Exit', command=self.exit)
+
         self.chat = Frame(root)
         self.note = ttk.Notebook(self.chat)
         self.user = data['user_name']
         self.chat_rooms = {}
+        self.login = data['user_login']
 
         root.wm_title("myChat (" + self.user + ")")
 
@@ -122,6 +135,32 @@ class ChatOpen():
             user = {user: room['users'][user]}
             room_users.user_add(user)
 
+    def registration(self):
+        reg_dialog = Toplevel(self.chat)
+        l1 = Label(reg_dialog, text='New Login: ')
+        login = Entry(reg_dialog)
+        login.delete(0, END)
+        login.insert(0, self.login)
+        l2 = Label(reg_dialog, text='New Name: ')
+        name = Entry(reg_dialog)
+        name.delete(0, END)
+        name.insert(0, self.user)
+        l3 = Label(reg_dialog, text='New Password: ')
+        password = Entry(reg_dialog)
+        l4 = Label(reg_dialog, text='Password Confirm: ')
+        password_conf = Entry(reg_dialog)
+        button_ok = Button(reg_dialog, text='OK')
+        button_cancel = Button(reg_dialog, text='Cancel', command=reg_dialog.destroy)
+        l1.grid(row=0, column=0)
+        l2.grid(row=1, column=0)
+        l3.grid(row=2, column=0)
+        l4.grid(row=3, column=0)
+        login.grid(row=0, column=1)
+        name.grid(row=1, column=1)
+        password.grid(row=2, column=1)
+        password_conf.grid(row=3, column=1)
+        button_ok.grid(row=4, column=0)
+        button_cancel.grid(row=4, column=1)
 
     def send_process(self, event):
         """ Function which using for form message package and sent it to the chat server."""

@@ -305,7 +305,22 @@ def kick_user(user, room):
     session_ku = Session()
     u = session_ku.query(User.id).filter(User.name == user).scalar()
     r = session_ku.query(Room.id).filter(Room.name == room).scalar()
-    assoc = session_ku.query(Associations).filter(Associations.room_id == r, Associations.user_id == u).delete()
+
+    if room == 'default':
+        user = session_ku.query(User).get(u)
+        assoc_all = session_ku.query(Associations).filter(Associations.user_id == u).all()
+        print assoc_all
+        rooms = []
+        for a in assoc_all:
+            rooms.append(session_ku.query(Room.name).filter(Room.id == a.room_id).scalar())
+            session_ku.delete(a)
+        session_ku.delete(user)
+        session_ku.commit()
+        print rooms
+        return rooms
+    else:
+        assoc = session_ku.query(Associations).filter(Associations.room_id == r, Associations.user_id == u).delete()
+
     session_ku.commit()
     session_ku.close()
     return assoc
