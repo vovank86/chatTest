@@ -100,7 +100,7 @@ class ChatOpen():
 
         self.menu = Menu(root)
         root.config(menu=self.menu)
-        fm = Menu(self.menu)
+        fm = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label='File', menu=fm)
 
 
@@ -108,6 +108,7 @@ class ChatOpen():
         print data
         if not data['user_reg']:
             fm.add_command(label='Registration...', command=self.registration)
+            fm.add_separator()
 
         fm.add_command(label='Exit', command=self.exit)
 
