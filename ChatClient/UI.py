@@ -17,7 +17,6 @@ font10 = str(int(10 * FONT_MULTIPLIER))
 font20 = str(int(20 * FONT_MULTIPLIER))
 
 
-
 class LoginForm:
     def __init__(self):
 
@@ -39,9 +38,10 @@ class LoginForm:
         self.button_cancel = Button(self.lf, text="Exit")
         self.button_cancel.bind("<Button-1>", LoginForm.exit_login)
         self.user_type = IntVar()
-        self.q1 = Radiobutton(self.lf, text="Guest", variable=self.user_type, value=0, command=self.change_user_type).grid(row=0, column=4)
-        self.q2 = Radiobutton(self.lf, text="Normal", variable=self.user_type, value=1, command=self.change_user_type).grid(row=0, column=3)
-
+        self.q1 = Radiobutton(self.lf, text="Guest", variable=self.user_type, value=0,
+                              command=self.change_user_type).grid(row=0, column=4)
+        self.q2 = Radiobutton(self.lf, text="Normal", variable=self.user_type, value=1,
+                              command=self.change_user_type).grid(row=0, column=3)
 
         self.title.grid(row=0, columnspan=2, pady=(0, 10))
         self.lab1.grid(row=1, sticky=W)
@@ -68,10 +68,10 @@ class LoginForm:
         global server_answer, chat, chance
         if self.user_type.get():
             user_data = {"operation": "login", "user": self.user_name.get(),
-                     "password": hashlib.md5(self.password.get()).hexdigest(), 'type': 'normal'}
+                         "password": hashlib.md5(self.password.get()).hexdigest(), 'type': 'normal'}
         else:
             user_data = {"operation": "login", "user": self.user_name.get(),
-                     "password": None, 'type': 'guest'}
+                         "password": None, 'type': 'guest'}
         server_answer = client.connect(user_data)
         if not server_answer:
             root.destroy()
@@ -102,7 +102,6 @@ class ChatOpen():
         root.config(menu=self.menu)
         fm = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label='File', menu=fm)
-
 
         data = client.json.loads(chat_data)
         print data
@@ -136,32 +135,59 @@ class ChatOpen():
             user = {user: room['users'][user]}
             room_users.user_add(user)
 
+    def send_registration_form(self, form):
+        mess = json.dumps({'operation': 'registration', 'user_old_name': self.user, 'login': form.login.get(),
+                           'user_new_name': form.name.get(), 'password': form.password.get()})
+        print mess
+
+    #def OnValidate(self, d, i, P, s, S, v, V, W):
+    #    print "OnValidate:"
+    #    print "d='%s'" % d
+    #    print "i='%s'" % i
+    #    print "P='%s'" % P
+    #    print "s='%s'" % s
+    #    print "S='%s'" % S
+    #    print "v='%s'" % v
+    #    print "V='%s'" % V
+    #    print "W='%s'" % W
+    #    # only allow if the string is lowercase
+    #    return (S.lower() == S)
+    def OnValidate(self, P, original, operation):
+        if operation == 'not':
+            print P
+            return not original in P and not P in original
+
+        else:
+            return P == original
+
+
     def registration(self):
         reg_dialog = Toplevel(self.chat)
-        l1 = Label(reg_dialog, text='New Login: ')
-        login = Entry(reg_dialog)
-        login.delete(0, END)
-        login.insert(0, self.login)
-        l2 = Label(reg_dialog, text='New Name: ')
-        name = Entry(reg_dialog)
-        name.delete(0, END)
-        name.insert(0, self.user)
-        l3 = Label(reg_dialog, text='New Password: ')
-        password = Entry(reg_dialog)
-        l4 = Label(reg_dialog, text='Password Confirm: ')
-        password_conf = Entry(reg_dialog)
-        button_ok = Button(reg_dialog, text='OK')
-        button_cancel = Button(reg_dialog, text='Cancel', command=reg_dialog.destroy)
-        l1.grid(row=0, column=0)
-        l2.grid(row=1, column=0)
-        l3.grid(row=2, column=0)
-        l4.grid(row=3, column=0)
-        login.grid(row=0, column=1)
-        name.grid(row=1, column=1)
-        password.grid(row=2, column=1)
-        password_conf.grid(row=3, column=1)
-        button_ok.grid(row=4, column=0)
-        button_cancel.grid(row=4, column=1)
+        reg_dialog.l1 = Label(reg_dialog, text='New Login: ')
+        reg_dialog.login = Entry(reg_dialog)
+        reg_dialog.login.delete(0, END)
+        reg_dialog.login.insert(0, self.login)
+        reg_dialog.l2 = Label(reg_dialog, text='New Name: ')
+        reg_dialog.name = Entry(reg_dialog)
+        reg_dialog.name.delete(0, END)
+        reg_dialog.name.insert(0, self.user)
+        reg_dialog.l3 = Label(reg_dialog, text='New Password \n(do not use username or login as password): ')
+        vcmd = (root.register(self.OnValidate), '%P', self.user, 'not')
+        reg_dialog.password = Entry(reg_dialog, validate="key", validatecommand=vcmd)
+        reg_dialog.l4 = Label(reg_dialog, text='Password Confirm: ')
+        reg_dialog.password_conf = Entry(reg_dialog)
+        reg_dialog.button_ok = Button(reg_dialog, text='OK', command=lambda: self.send_registration_form(reg_dialog))
+        reg_dialog.button_cancel = Button(reg_dialog, text='Cancel', command=reg_dialog.destroy)
+        reg_dialog.l1.grid(row=0, column=0)
+        reg_dialog.l2.grid(row=1, column=0)
+        reg_dialog.l3.grid(row=2, column=0)
+        reg_dialog.l4.grid(row=3, column=0)
+        reg_dialog.login.grid(row=0, column=1)
+        reg_dialog.name.grid(row=1, column=1)
+        reg_dialog.password.grid(row=2, column=1)
+        reg_dialog.password_conf.grid(row=3, column=1)
+        reg_dialog.button_ok.grid(row=4, column=0)
+        reg_dialog.button_cancel.grid(row=4, column=1)
 
     def send_process(self, event):
         """ Function which using for form message package and sent it to the chat server."""
@@ -207,7 +233,8 @@ class ChatOpen():
 
     def add_room(self, user, room):
         tab_inner = Frame(self.note, bg='#ffffff', bd=0)
-        chat_window = Text(tab_inner, font="Arial " + font10, foreground='#666666', width=100, borderwidth = 1, relief = SUNKEN)
+        chat_window = Text(tab_inner, font="Arial " + font10, foreground='#666666', width=100, borderwidth=1,
+                           relief=SUNKEN)
         chat_window.tag_configure("user", foreground='#3399ff')
         chat_input = Entry(tab_inner, textvariable=msg, font="Arial " + font10, width=80)
         chat_send = Button(tab_inner, text="Send", relief=GROOVE, bd=1, bg="#19b3e5",
@@ -275,7 +302,8 @@ def loop_process():
             elif server_answer['operation'] == 'start_vote':
                 if isinstance(chat, ChatOpen):
                     print server_answer
-                    chat.voting(server_answer['user'], server_answer['room'], server_answer['vote'], server_answer['reason'])
+                    chat.voting(server_answer['user'], server_answer['room'], server_answer['vote'],
+                                server_answer['reason'])
 
             elif server_answer['operation'] == 'vote_complete':
                 if isinstance(chat, ChatOpen):
