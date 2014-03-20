@@ -240,18 +240,29 @@ def check_pass(user, password):
         return False
 
 
-def registration(login, name, password):
+def registration(login, new_login, new_name, new_password):
+    print login, new_login, new_name, new_password
     session_reg = Session()
     user = session_reg.query(User).filter(User.login.in_([login])).one()
-    user.password = hashlib.md5(password).hexdigest()
-    auth_perm = session.query(Perm).filter(Perm.name == 'auth_user')
-    room = session_reg.query(Room).filter(Room.name == 'default_room')
+    print user.__dict__
+    user.password = hashlib.md5(new_password).hexdigest()
+    user.registered = 1
+    user.login = new_login
+    user.name = new_name
+    print user.__dict__
+    auth_perm = session_reg.query(Perm).filter(Perm.name == 'auth_user').one()
+    print auth_perm
+    room = session_reg.query(Room).filter(Room.name == 'default').one()
+    print room
     a = session_reg.query(Associations).filter(
-        Associations.user_id == user.id and Associations.room_id == room.id).one()
+        Associations.user_id == user.id, Associations.room_id == room.id).one()
+    print a.__dict__
     a.perm = auth_perm
-    session.commit()
-    session.close()
-    start_sys(user)
+    print a.__dict__
+    session_reg.commit()
+    session_reg.close()
+
+
 
 
 def is_admin(uname, room):

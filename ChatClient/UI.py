@@ -97,7 +97,7 @@ class ChatOpen():
         Class constructor which using for creating user interface of chat system and display Chat Screen.
         @rtype : object
         """
-
+        global root, error_mes
         self.menu = Menu(root)
         root.config(menu=self.menu)
         fm = Menu(self.menu, tearoff=0)
@@ -136,32 +136,32 @@ class ChatOpen():
             room_users.user_add(user)
 
     def send_registration_form(self, form):
-        mess = json.dumps({'operation': 'registration', 'user_old_name': self.user, 'login': form.login.get(),
-                           'user_new_name': form.name.get(), 'password': form.password.get()})
-        print mess
+        if form.name.get() != form.password.get() and form.password.get() == form.password_conf.get():
+            mess = json.dumps({'operation': 'registration', 'user_old_name': self.user, 'login': form.login.get(),
+                               'user_new_name': form.name.get(), 'password': form.password.get()})
+            client.s.send(mess)
+            form.destroy()
+        elif form.name.get() == form.password.get():
+            form.password.configure(bg='red')
+            form.name.configure(bg='red')
+            error_mes.set("Name can't be equal password")
+        elif form.login.get() == form.password.get():
+            form.password.configure(bg='red')
+            form.login.configure(bg='red')
+            error_mes.set("Login can't be equal password")
 
-    #def OnValidate(self, d, i, P, s, S, v, V, W):
-    #    print "OnValidate:"
-    #    print "d='%s'" % d
-    #    print "i='%s'" % i
-    #    print "P='%s'" % P
-    #    print "s='%s'" % s
-    #    print "S='%s'" % S
-    #    print "v='%s'" % v
-    #    print "V='%s'" % V
-    #    print "W='%s'" % W
-    #    # only allow if the string is lowercase
-    #    return (S.lower() == S)
-    def OnValidate(self, P, original, operation):
-        if operation == 'not':
-            print P
-            return not original in P and not P in original
-
-        else:
-            return P == original
-
+        elif form.password_conf.get() != form.password.get():
+            form.password.configure(bg='red')
+            form.password_conf.configure(bg='red')
+            error_mes.set("Password and Password confirmation should be equal")
 
     def registration(self):
+        def back_to_normal(event):
+            error_mes.set('')
+            reg_dialog.name.configure(bg='white')
+            reg_dialog.login.configure(bg='white')
+            reg_dialog.password.configure(bg='white')
+
         reg_dialog = Toplevel(self.chat)
         reg_dialog.l1 = Label(reg_dialog, text='New Login: ')
         reg_dialog.login = Entry(reg_dialog)
@@ -172,22 +172,45 @@ class ChatOpen():
         reg_dialog.name.delete(0, END)
         reg_dialog.name.insert(0, self.user)
         reg_dialog.l3 = Label(reg_dialog, text='New Password \n(do not use username or login as password): ')
-        vcmd = (root.register(self.OnValidate), '%P', self.user, 'not')
-        reg_dialog.password = Entry(reg_dialog, validate="key", validatecommand=vcmd)
+        reg_dialog.password = Entry(reg_dialog, show="*")
+        reg_dialog.name.bind('<FocusIn>', func=back_to_normal)
+        reg_dialog.name.bind('<Button-1>', func=back_to_normal)
+        reg_dialog.login.bind('<FocusIn>', func=back_to_normal)
+        reg_dialog.login.bind('<Button-1>', func=back_to_normal)
+        reg_dialog.password.bind('<FocusIn>', func=back_to_normal)
+        reg_dialog.password.bind('<Button-1>', func=back_to_normal)
         reg_dialog.l4 = Label(reg_dialog, text='Password Confirm: ')
-        reg_dialog.password_conf = Entry(reg_dialog)
+        reg_dialog.password_conf = Entry(reg_dialog, show="*")
         reg_dialog.button_ok = Button(reg_dialog, text='OK', command=lambda: self.send_registration_form(reg_dialog))
         reg_dialog.button_cancel = Button(reg_dialog, text='Cancel', command=reg_dialog.destroy)
-        reg_dialog.l1.grid(row=0, column=0)
-        reg_dialog.l2.grid(row=1, column=0)
-        reg_dialog.l3.grid(row=2, column=0)
-        reg_dialog.l4.grid(row=3, column=0)
-        reg_dialog.login.grid(row=0, column=1)
-        reg_dialog.name.grid(row=1, column=1)
-        reg_dialog.password.grid(row=2, column=1)
-        reg_dialog.password_conf.grid(row=3, column=1)
-        reg_dialog.button_ok.grid(row=4, column=0)
-        reg_dialog.button_cancel.grid(row=4, column=1)
+        reg_dialog.l1.grid(row=1, column=0)
+        reg_dialog.l2.grid(row=2, column=0)
+        reg_dialog.l3.grid(row=3, column=0)
+        reg_dialog.l4.grid(row=4, column=0)
+        reg_dialog.login.grid(row=1, column=1)
+        reg_dialog.name.grid(row=2, column=1)
+        reg_dialog.password.grid(row=3, column=1)
+        reg_dialog.error_mes1 = Label(reg_dialog, textvariable=error_mes, foreground='red')
+        reg_dialog.error_mes1.grid(row=0, column=0, columnspan=2, sticky=W)
+        reg_dialog.password_conf.grid(row=4, column=1)
+        reg_dialog.button_ok.grid(row=5, column=0)
+        reg_dialog.button_cancel.grid(row=5, column=1)
+
+    def user_reg(self, user_name_old, user_name):
+        if self.user == user_name_old:
+            info_window = Toplevel(self.chat)
+            info_window.info = Label(info_window,
+                                     text='Registration successful! Now the program it shutting. \n'
+                                          'Next time you should login as normal user, using login and password '
+                                          'which you were enter in registration form!')
+            info_window.info.pack()
+            info_window.button = Button(info_window, text='OK', command=self.exit)
+            info_window.button.pack()
+        else:
+            for room in self.chat_rooms:
+                room = self.chat_rooms.get(room)
+                room_users = room.get('user_list')
+                room_users.rename_user(user_name_old, user_name)
 
     def send_process(self, event):
         """ Function which using for form message package and sent it to the chat server."""
@@ -272,7 +295,7 @@ class ChatOpen():
 def loop_process():
     """ Function which using for get messages and display the message in the chat window."""
     client.s.setblocking(False)
-    global server_answer
+    global server_answer, root
     try:
         sa = client.s.recv(client.buf)
         sa = re.sub('\}\{', '};{', sa)
@@ -301,14 +324,17 @@ def loop_process():
 
             elif server_answer['operation'] == 'start_vote':
                 if isinstance(chat, ChatOpen):
-                    print server_answer
                     chat.voting(server_answer['user'], server_answer['room'], server_answer['vote'],
                                 server_answer['reason'])
 
             elif server_answer['operation'] == 'vote_complete':
                 if isinstance(chat, ChatOpen):
-                    print server_answer
                     chat.voting_complete(server_answer['user'], server_answer['room'])
+
+            elif server_answer['operation'] == 'registration':
+                if isinstance(chat, ChatOpen):
+                   chat.user_reg(server_answer['user_old_name'], server_answer['user_new_name'])
+
 
     except:
         root.after(1, loop_process)
@@ -330,6 +356,8 @@ if __name__ == "__main__":
     chat = {}
     root = Tk()
     msg = StringVar()
+    error_mes = StringVar()
+    error_mes.set('')
     msg.set('')
     root.wm_title("myChat")
     obj = LoginForm()

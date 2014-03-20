@@ -92,6 +92,12 @@ class UserControl(Frame):
 
         self.display_user()
 
+    def rename(self, user_name):
+        print user_name, self.user_name
+        self.user_name = user_name
+        print self.user_name
+        self.display_user()
+
     def delete_user(self):
         client.s.send(json.dumps({'operation': 'kick_user', 'room': self.room, 'user': self.user_name}))
 
@@ -228,11 +234,8 @@ class UserControl(Frame):
         def get_perm_for_user():
             try:
                 sa = client.s.recv(client.buf)
-                print sa
                 sa = json.loads(sa)
-                print sa
                 if sa['operation'] == 'get_perm':
-                    print sa['val']
                     self.edit_perm_dialog.perm = sa['val']
 
             except:
@@ -317,8 +320,15 @@ class UserList(Frame):
     def _add_user(self):
         self.add_user_dialog = Toplevel(self)
 
+    def rename_user(self, old_name, new_name):
+        user = self.users.get(old_name)
+        self.users[new_name] = self.users.pop(old_name)
+        user.rename(new_name)
+
+
+
+
     def change_user_state(self, user_list):
-        print user_list
         assert isinstance(user_list, dict)
         for user in user_list:
             if user in self.users:
@@ -333,7 +343,6 @@ class UserList(Frame):
 
     def user_add(self, user_info):
         user = user_info.keys()[0]
-        print user_info
         ul_user = UserControl(self, self.room, self.perm, user_info)
         if len(self.users) == 0:
             informer_packed = 1

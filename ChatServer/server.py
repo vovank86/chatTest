@@ -237,6 +237,14 @@ if __name__ == "__main__":
                                 auth(sock, vote_cancel)
                                 broadcast_data(sock, vote_cancel)
 
+                        elif 'registration' == user_data["operation"]:
+                            db.registration(user_data['user_old_name'], user_data['login'], user_data['user_new_name'], user_data['password'])
+                            answer = json.dumps({'operation': 'registration', 'user_old_name': user_data['user_old_name'],
+                                                 'user_new_name': user_data['user_new_name']})
+                            auth(sock, answer)
+                            broadcast_data(sock, answer)
+
+
 
                 except:
                     e = sys.exc_info()[0]
