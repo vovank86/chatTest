@@ -244,6 +244,12 @@ if __name__ == "__main__":
                             auth(sock, answer)
                             broadcast_data(sock, answer)
 
+                        elif 'add_new_room' == user_data["operation"]:
+                            answer = db.add_new_room(user_data['user_name'], user_data['room_name'])
+                            answer['operation'] = 'add_new_room'
+                            auth(sock, answer)
+
+
 
 
                 except:

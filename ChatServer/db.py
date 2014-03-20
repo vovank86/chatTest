@@ -232,7 +232,6 @@ def auth_user(login, password, type):
     session.close()
 
 
-
 def check_pass(user, password):
     if password == user.password:
         return user
@@ -261,8 +260,6 @@ def registration(login, new_login, new_name, new_password):
     print a.__dict__
     session_reg.commit()
     session_reg.close()
-
-
 
 
 def is_admin(uname, room):
@@ -481,5 +478,29 @@ def vote_cancel(vote_id):
     session_vote_cancel.commit()
     session_vote_cancel.close()
     return res
+
+
+def add_new_room(user_name, room_name):
+    session_add_new_room = Session()
+    user = session_add_new_room.query(User).filter(User.name == user_name).one()
+    perm = session_add_new_room.query(Perm).filter(Perm.name == 'admin').one()
+    a = Associations()
+    a.user = user
+    a.perm = perm
+    room = Room(room_name)
+    room.user.append(a)
+    session_add_new_room.add(a)
+    session_add_new_room.add(room)
+    session_add_new_room.commit()
+    room_users = {}
+    answer = dict(room_name=room.name, perm=session_add_new_room.query(Perm.id, Perm.name, Perm.add_user, Perm.create_room,
+                                               Perm.create_vote, Perm.delete_room, Perm.delete_user,
+                                               Perm.delete_vote, Perm.make_secure, Perm.make_unsecure,
+                                               Perm.voting, Perm.edit_perm, Perm.edit_perm_def).filter(
+                                Perm.id == perm.id).one().__dict__, users=room_users)
+
+    session_add_new_room.close()
+    return answer
+
 
 

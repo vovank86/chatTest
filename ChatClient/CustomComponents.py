@@ -325,9 +325,6 @@ class UserList(Frame):
         self.users[new_name] = self.users.pop(old_name)
         user.rename(new_name)
 
-
-
-
     def change_user_state(self, user_list):
         assert isinstance(user_list, dict)
         for user in user_list:

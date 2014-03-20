@@ -108,6 +108,9 @@ class ChatOpen():
         if not data['user_reg']:
             fm.add_command(label='Registration...', command=self.registration)
             fm.add_separator()
+        else:
+            fm.add_command(label='Add new room...', command=self.add_new_room)
+
 
         fm.add_command(label='Exit', command=self.exit)
 
@@ -124,6 +127,24 @@ class ChatOpen():
 
         self.note.pack()
         self.chat.pack()
+
+    def add_new_room(self):
+        new_room_dialog = Toplevel(self.chat)
+        new_room_dialog.title('Add new room')
+        new_room_dialog.ln = Label(new_room_dialog, text='room name')
+        #TODO: have to implement room settings
+        new_room_dialog.name = Entry(new_room_dialog)
+        new_room_dialog.button_ok = Button(new_room_dialog, text="OK", command=lambda: self.send_new_room_info(new_room_dialog))
+        new_room_dialog.cancel = Button(new_room_dialog, text='Cancel', command=lambda: new_room_dialog.destroy())
+        new_room_dialog.ln.grid(row=0, column=0)
+        new_room_dialog.name.grid(row=0, column=1)
+        new_room_dialog.button_ok.grid(row=1, column=0)
+        new_room_dialog.cancel.grid(row=1, column=1)
+
+    def send_new_room_info(self, dialog):
+        mess = json.dumps({'operation': 'add_new_room', 'user_name': self.user, 'room_name': dialog.name.get()})
+        client.s.send(mess)
+
 
     def add_user_to_the_room(self, user, room):
         if self.user == user:
