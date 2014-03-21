@@ -10,6 +10,7 @@ import client
 import hashlib
 import json
 from settings import FONT_MULTIPLIER
+import tkMessageBox
 
 #TODO: configure the Chat view using CustomComponents and grid
 
@@ -100,19 +101,18 @@ class ChatOpen():
         global root, error_mes
         self.menu = Menu(root)
         root.config(menu=self.menu)
-        fm = Menu(self.menu, tearoff=0)
-        self.menu.add_cascade(label='File', menu=fm)
+        self.fm = Menu(self.menu, tearoff=0)
+        self.menu.add_cascade(label='File', menu=self.fm)
 
         data = client.json.loads(chat_data)
         print data
         if not data['user_reg']:
-            fm.add_command(label='Registration...', command=self.registration)
-            fm.add_separator()
+            self.fm.add_command(label='Registration...', command=self.registration)
+            self.fm.add_separator()
         else:
-            fm.add_command(label='Add new room...', command=self.add_new_room)
+            self.fm.add_command(label='Add new room...', command=self.add_new_room)
 
-
-        fm.add_command(label='Exit', command=self.exit)
+        self.fm.add_command(label='Exit', command=self.exit)
 
         self.chat = Frame(root)
         self.note = ttk.Notebook(self.chat)
@@ -123,10 +123,37 @@ class ChatOpen():
         root.wm_title("myChat (" + self.user + ")")
 
         for room in data['user_rooms']:
-            self.add_room(self.user, room)
+            self.add_room(room)
 
         self.note.pack()
         self.chat.pack()
+
+        self.am = Menu(self.menu, tearoff=0)
+        self.menu.add_cascade(label='Administrate room', menu=self.am)
+        self.note.bind('<<NotebookTabChanged>>', self.admin_menu_act)
+        self.am.add_command(label='Current room settings...', command=self.setup_room)
+
+    def delete_room_accept(self, room_name):
+        room = self.get_room(room_name)
+        self.note.forget(room['instance'])
+
+
+    def delete_room(self):
+        room_name = self.note.tab(self.note.select(), "text")
+        room = self.get_active_room()
+        if room.get('user_list').lenght() == 0:
+            client.s.send(json.dumps({'operation': 'delete_room', 'room_name': room_name}))
+        else:
+            result = tkMessageBox.askquestion('Delete the "' + room_name + '" room', 'This room contents ' + str(
+                room.get('user_list').lenght()) + ' users.\n Are you sure that you want to delete this room?',
+                                              icon='warning')
+            if result == 'yes':
+                client.s.send(json.dumps({'operation': 'delete_room', 'room_name': room_name}))
+
+    def setup_room(self):
+        if self.get_active_room().get('secure'):
+            pass
+
 
     def add_new_room(self):
         new_room_dialog = Toplevel(self.chat)
@@ -134,7 +161,8 @@ class ChatOpen():
         new_room_dialog.ln = Label(new_room_dialog, text='room name')
         #TODO: have to implement room settings
         new_room_dialog.name = Entry(new_room_dialog)
-        new_room_dialog.button_ok = Button(new_room_dialog, text="OK", command=lambda: self.send_new_room_info(new_room_dialog))
+        new_room_dialog.button_ok = Button(new_room_dialog, text="OK",
+                                           command=lambda: self.send_new_room_info(new_room_dialog))
         new_room_dialog.cancel = Button(new_room_dialog, text='Cancel', command=lambda: new_room_dialog.destroy())
         new_room_dialog.ln.grid(row=0, column=0)
         new_room_dialog.name.grid(row=0, column=1)
@@ -144,11 +172,11 @@ class ChatOpen():
     def send_new_room_info(self, dialog):
         mess = json.dumps({'operation': 'add_new_room', 'user_name': self.user, 'room_name': dialog.name.get()})
         client.s.send(mess)
-
+        dialog.destroy()
 
     def add_user_to_the_room(self, user, room):
         if self.user == user:
-            self.add_room(self.user, room)
+            self.add_room(room)
         else:
             room_inst = self.get_room(str(room['room_name']))
             room_users = room_inst.get('user_list')
@@ -275,7 +303,7 @@ class ChatOpen():
         if self.user == user:
             self.note.forget(room['instance'])
 
-    def add_room(self, user, room):
+    def add_room(self, room):
         tab_inner = Frame(self.note, bg='#ffffff', bd=0)
         chat_window = Text(tab_inner, font="Arial " + font10, foreground='#666666', width=100, borderwidth=1,
                            relief=SUNKEN)
@@ -289,11 +317,13 @@ class ChatOpen():
         chat_send.bind('<Button-1>', self.send_process)
         chat_input.bind('<Return>', self.send_process)
         temp_list = room['users']
-        temp_list.pop(self.user)
+        if len(temp_list) > 0:
+            temp_list.pop(self.user)
         user_list = UserList(tab_inner, str(room['room_name']), room['perm'], temp_list, self.user)
         user_list.grid(row=0, column=0, rowspan=2, sticky=W + N)
         self.chat_rooms.update(
-            {room['room_name']: {'instance': tab_inner, 'perm': room['perm'], 'text': chat_window,
+            {room['room_name']: {'instance': tab_inner, 'perm': room['perm'], 'secure': room['secure'],
+                                 'auth': room['auth'], 'text': chat_window,
                                  'user_list': user_list}})
 
         self.note.add(tab_inner, text=room['room_name'])
@@ -312,6 +342,38 @@ class ChatOpen():
         assert isinstance(room_users, UserList)
         room_users.voting_complete(user_name)
 
+    def add_new_room_to_user(self, user, room):
+        if user == self.user:
+            self.add_room(room)
+
+    def is_admin(self):
+        room = self.get_active_room()
+        perm = room.get('perm')
+
+        if self.note.tab(self.note.select(), "text") == 'default':
+            if perm.get('name') == 'root':
+                return True
+            else:
+                return False
+        else:
+            if perm.get('name') == 'admin':
+                try:
+                    index_item = self.am.index('Delete current room')
+                    self.am.delete(index_item)
+                except:
+                    pass
+
+                self.am.add_command(label='Delete current room', command=self.delete_room)
+                return True
+            else:
+                return False
+
+    def admin_menu_act(self, event):
+        if self.is_admin():
+            self.menu.entryconfig(self.menu.index('Administrate room'), state=NORMAL)
+        else:
+            self.menu.entryconfig(self.menu.index('Administrate room'), state=DISABLED)
+
 
 def loop_process():
     """ Function which using for get messages and display the message in the chat window."""
@@ -321,7 +383,6 @@ def loop_process():
         sa = client.s.recv(client.buf)
         sa = re.sub('\}\{', '};{', sa)
         sa = re.split(';', sa)
-
         for server_answer in sa:
             server_answer = json.loads(server_answer)
             if server_answer['operation'] == 'send_mess':
@@ -354,7 +415,16 @@ def loop_process():
 
             elif server_answer['operation'] == 'registration':
                 if isinstance(chat, ChatOpen):
-                   chat.user_reg(server_answer['user_old_name'], server_answer['user_new_name'])
+                    chat.user_reg(server_answer['user_old_name'], server_answer['user_new_name'])
+
+            elif server_answer['operation'] == 'add_new_room':
+                if isinstance(chat, ChatOpen):
+                    chat.add_new_room_to_user(server_answer['user_name'], server_answer['room'])
+
+            elif server_answer['operation'] == 'delete_room':
+                if isinstance(chat, ChatOpen):
+                    chat.delete_room_accept(server_answer['room_name'])
+
 
 
     except:

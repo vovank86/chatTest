@@ -113,7 +113,6 @@ if __name__ == "__main__":
                     #In Windows, sometimes when a TCP program closes abruptly,
                     # a "Connection reset by peer" exception will be thrown
                     data = sock.recv(RECV_BUFFER)
-                    print data
                     if data:
                         user_data = json.loads(data)
                         print 'called server operation:', user_data["operation"]
@@ -245,10 +244,17 @@ if __name__ == "__main__":
                             broadcast_data(sock, answer)
 
                         elif 'add_new_room' == user_data["operation"]:
-                            answer = db.add_new_room(user_data['user_name'], user_data['room_name'])
-                            answer['operation'] = 'add_new_room'
+                            room = db.add_new_room(user_data['user_name'], user_data['room_name'])
+                            answer = {'operation': 'add_new_room', 'user_name': user_data['user_name'], 'room': room}
+                            answer = json.dumps(answer)
                             auth(sock, answer)
 
+                        elif 'delete_room' == user_data['operation']:
+                            room_name = user_data['room_name']
+                            db.delete_room(room_name)
+                            answer = json.dumps(user_data)
+                            auth(sock, answer)
+                            broadcast_data(sock, answer)
 
 
 

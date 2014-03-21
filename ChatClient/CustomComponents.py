@@ -330,7 +330,8 @@ class UserList(Frame):
         for user in user_list:
             if user in self.users:
                 self.users.get(user).set_user_address(user_list.get(user))
-            elif self.user != user:
+
+            elif self.user != user and self.room == 'default':
                 print user
                 user = {user: user_list.get(user)}
                 self.user_add(user)
@@ -367,6 +368,9 @@ class UserList(Frame):
             user = self.users.get(user_name)
             assert isinstance(user, UserControl)
             user.voting_complete()
+
+    def lenght(self):
+        return len(self.users)
 
 
 class AddUser(Frame):

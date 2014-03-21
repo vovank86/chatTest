@@ -173,7 +173,7 @@ def install_chat(session, PORT):
     password = make_server_password()
 
     root_perm = Perm("root", 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-    admin_perm = Perm("admin", 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+    admin_perm = Perm("admin", 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
     authorised_perm = Perm("auth_user", 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0)
     guest_perm = Perm("guest", 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0)
 
@@ -300,7 +300,7 @@ def start_sys(user, session):
                                                    Perm.delete_vote, Perm.make_secure, Perm.make_unsecure,
                                                    Perm.voting, Perm.edit_perm, Perm.edit_perm_def).filter(
                                     Perm.id == r_user.perm_id).one().__dict__,
-                                users=room_users)
+                                users=room_users, secure=room.secure, auth=room.auth)
                 user_rooms.append(the_room)
 
     start_chat_system = {"user_login": user.login, "user_name": user.name, "user_reg": user.registered,
@@ -426,7 +426,7 @@ def add_u_to_the_r(uname, room_name, perm_name):
                                                Perm.delete_vote, Perm.make_secure, Perm.make_unsecure,
                                                Perm.voting, Perm.edit_perm, Perm.edit_perm_def).filter(
                                 Perm.id == r_user.perm_id).one().__dict__,
-                            users=room_users)
+                            users=room_users, secure=room_obj.secure, auth=room_obj.auth)
     add_user_obj = {"user_name": uname, "room": the_room}
 
     session.close()
@@ -497,10 +497,21 @@ def add_new_room(user_name, room_name):
                                                Perm.create_vote, Perm.delete_room, Perm.delete_user,
                                                Perm.delete_vote, Perm.make_secure, Perm.make_unsecure,
                                                Perm.voting, Perm.edit_perm, Perm.edit_perm_def).filter(
-                                Perm.id == perm.id).one().__dict__, users=room_users)
+                                Perm.id == perm.id).one().__dict__, users=room_users, secure=room.secure, auth=room.auth)
 
     session_add_new_room.close()
     return answer
 
+
+def delete_room(room_name):
+    session_del_room = Session()
+    room = session_del_room.query(Room).filter(Room.name == room_name).one()
+    for assoc in room.user:
+        session_del_room.delete(assoc)
+        session_del_room.flush()
+        session_del_room.commit()
+    session_del_room.delete(room)
+    session_del_room.commit()
+    session_del_room.close()
 
 
