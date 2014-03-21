@@ -151,9 +151,13 @@ class ChatOpen():
                 client.s.send(json.dumps({'operation': 'delete_room', 'room_name': room_name}))
 
     def setup_room(self):
-        if self.get_active_room().get('secure'):
-            pass
-
+        setup_room_dialog = Toplevel(self.chat)
+        setup_room_dialog.title('Setup room')
+        setup_room_dialog.l1 = Label(setup_room_dialog, text='"'+self.note.tab(self.note.select(), "text")+'" room settings:', font="Verdana " + font10)
+        #if self.get_active_room().get('secure'):
+        #    setup_room_dialog.button = Button(setup_room_dialog, text='Make secure.')
+        #else:
+        #    setup_room_dialog.button = Button(setup_room_dialog, text='Make unsecure.')
 
     def add_new_room(self):
         new_room_dialog = Toplevel(self.chat)
@@ -351,6 +355,12 @@ class ChatOpen():
         perm = room.get('perm')
 
         if self.note.tab(self.note.select(), "text") == 'default':
+            try:
+                index_item = self.am.index('Delete current room')
+                self.am.delete(index_item)
+            except:
+                pass
+
             if perm.get('name') == 'root':
                 return True
             else:
@@ -424,8 +434,6 @@ def loop_process():
             elif server_answer['operation'] == 'delete_room':
                 if isinstance(chat, ChatOpen):
                     chat.delete_room_accept(server_answer['room_name'])
-
-
 
     except:
         root.after(1, loop_process)
