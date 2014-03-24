@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from collections import OrderedDict, Counter
 
 __author__ = 'Vladimir Kanubrikov'
 
@@ -153,11 +154,123 @@ class ChatOpen():
     def setup_room(self):
         setup_room_dialog = Toplevel(self.chat)
         setup_room_dialog.title('Setup room')
-        setup_room_dialog.l1 = Label(setup_room_dialog, text='"'+self.note.tab(self.note.select(), "text")+'" room settings:', font="Verdana " + font10)
-        #if self.get_active_room().get('secure'):
-        #    setup_room_dialog.button = Button(setup_room_dialog, text='Make secure.')
-        #else:
-        #    setup_room_dialog.button = Button(setup_room_dialog, text='Make unsecure.')
+        setup_room_dialog.l1 = Label(setup_room_dialog,
+                                     text='"' + self.note.tab(self.note.select(), "text") + '" room settings:',
+                                     font="Verdana " + font10)
+        setup_room_dialog.room_name = self.note.tab(self.note.select(), "text")
+        setup_room_dialog.mseq = IntVar()
+        setup_room_dialog.new_pass = IntVar()
+        setup_room_dialog.is_auth = IntVar()
+        setup_room_dialog.l3 = Text(setup_room_dialog, font='Veranda ' + font10, height=8, width=32)
+        setup_room_dialog.l2 = Label(setup_room_dialog, text='password:')
+        setup_room_dialog.old_pass = Entry(setup_room_dialog)
+
+        _s = ''
+        _auth = ''
+        _config_info = ''
+
+        if self.get_active_room().get('secure'):
+            _s = 'It\'s secure'
+        else:
+            _s = 'It\'s unsecure'
+        if self.get_active_room().get('auth'):
+            _auth = 'It\'s only for registered users'
+        else:
+            _auth = 'It\'s for all users'
+
+        def update_info(_config_info):
+            _text_info = 'The room has next settings now: \n ' + _s + '\n ' + _auth + '.' + '\n\nYour changes:\n ' + _config_info
+            setup_room_dialog.l3.delete(1.0, END)
+            setup_room_dialog.l3.insert(END, _text_info)
+
+
+        update_info(_config_info)
+        if self.get_active_room().get('secure'):
+            setup_room_dialog.mseq.set(1)
+
+        if self.get_active_room().get('auth'):
+            setup_room_dialog.is_auth.set(1)
+
+        def setup_init():
+
+            if setup_room_dialog.is_auth.get():
+                _ci = 'only for registered users'
+                update_info(_ci)
+            else:
+                _ci = 'for all users'
+                update_info(_ci)
+
+            if self.get_active_room().get('secure'):
+                setup_room_dialog.l2.grid(row=1, column=0)
+                setup_room_dialog.old_pass.grid(row=1, column=1)
+                setup_room_dialog.chainge_pass(row=2, column=1, columnspan=3)
+                if setup_room_dialog.mseq.get() and setup_room_dialog.new_pass.get():
+                    update_info('new password' + '\n ' + _ci)
+                    setup_room_dialog.npl.grid(row=3, column=0)
+                    setup_room_dialog.np.grid(row=3, column=1, columnspan=2)
+                    setup_room_dialog.npcl.grid(row=4, column=0)
+                    setup_room_dialog.npc.grid(row=4, column=1, columnspan=2)
+
+                else:
+                    update_info('make unsecure' + '\n ' + _ci)
+                    setup_room_dialog.npl.grid_forget()
+                    setup_room_dialog.np.grid_forget()
+                    setup_room_dialog.npcl.grid_forget()
+                    setup_room_dialog.npc.grid_forget()
+            else:
+                if setup_room_dialog.mseq.get():
+                    setup_room_dialog.new_pass.set(1)
+                    update_info('make secure\n new password' + '\n ' + _ci)
+                    setup_room_dialog.npl.grid(row=3, column=0)
+                    setup_room_dialog.np.grid(row=3, column=1, columnspan=2)
+                    setup_room_dialog.npcl.grid(row=4, column=0)
+                    setup_room_dialog.npc.grid(row=4, column=1, columnspan=2)
+                else:
+                    update_info('' + _ci)
+                    setup_room_dialog.new_pass.set(0)
+                    setup_room_dialog.npl.grid_forget()
+                    setup_room_dialog.np.grid_forget()
+                    setup_room_dialog.npcl.grid_forget()
+                    setup_room_dialog.npc.grid_forget()
+
+
+
+        setup_room_dialog.auth = Checkbutton(setup_room_dialog, text='Only for registered users',
+                                             variable=setup_room_dialog.is_auth, command=lambda: setup_init())
+        setup_room_dialog.room_sequre = Checkbutton(setup_room_dialog, text='room is secure',
+                                                    variable=setup_room_dialog.mseq, command=lambda: setup_init())
+        setup_room_dialog.chainge_pass = Checkbutton(setup_room_dialog, text='change password of this  room',
+                                                     variable=setup_room_dialog.new_pass, command=lambda: setup_init())
+        setup_room_dialog.npl = Label(setup_room_dialog, text='New password:')
+        setup_room_dialog.np = Entry(setup_room_dialog)
+        setup_room_dialog.npcl = Label(setup_room_dialog, text='New password confirmation:')
+        setup_room_dialog.npc = Entry(setup_room_dialog)
+        setup_room_dialog.l1.grid(row=0, column=0, columnspan=3)
+        setup_room_dialog.room_sequre.grid(row=1, column=2)
+        setup_room_dialog.auth.grid(row=5, column=0, columnspan=3)
+        setup_room_dialog.l3.grid(row=6, column=0, columnspan=3)
+        setup_room_dialog.button_ok = Button(setup_room_dialog, text='OK', command=lambda: self.send_new_settings(setup_room_dialog))
+        setup_room_dialog.button_cancel = Button(setup_room_dialog, text='Cancel', command=setup_room_dialog.destroy)
+        setup_room_dialog.button_ok.grid(row=7, column=0)
+        setup_room_dialog.button_cancel.grid(row=7, column=2)
+
+
+    def send_new_settings(self, settings):
+        changes=[]
+        auth = settings.is_auth.get()
+        secure = settings.mseq.get()
+        change_pass = settings.new_pass.get()
+        room_name = settings.room_name
+        text = settings.l3.get("0.0", END).__str__()
+        if text.count('for all users') == 1 and text.count('only for registered users') == 1:
+            changes.append('auth')
+        if text.count('make secure') == 1:
+            changes.append('secure')
+        if text.count('new password') == 1:
+            changes.append('change_pass')
+
+        print changes
+        print room_name, auth, secure, change_pass
 
     def add_new_room(self):
         new_room_dialog = Toplevel(self.chat)
