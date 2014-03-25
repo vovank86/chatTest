@@ -304,7 +304,7 @@ class UserList(Frame):
                                          bg='#ffffff', foreground='#cccccc', height=10)
 
         self.add_user = AddUser(self)
-        if perm['add_user']:
+        if perm['add_user'] and self.room != 'default':
             self.add_user.pack(fill=BOTH, expand=1)
 
         for user in user_list:

@@ -265,7 +265,13 @@ if __name__ == "__main__":
                             room_old_pass = user_data['old_pass']
                             room_new_pass = user_data['new_pass']
                             if 'secure' in changes or 'change_pass' in changes:
-                                db.room_change_secure_settings(room_name, room_secure, room_change_pass, room_old_pass, room_new_pass)
+                                answer = db.room_change_secure_settings(room_name, room_secure, room_change_pass, room_old_pass, room_new_pass)
+                                print answer
+                                if answer == 'change secure':
+                                    mess = json.dumps({'operation': 'change_secure', 'room_name': room_name})
+                                    broadcast_data(sock, mess)
+                                    auth(sock, mess)
+
                             if 'auth' in changes:
                                 db.room_change_auth(room_name, room_auth)
 

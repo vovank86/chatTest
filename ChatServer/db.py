@@ -536,12 +536,15 @@ def room_change_secure_settings(room_name, secure, change_pass, old_pass, new_pa
         elif not secure and old_pass == room.password:
             room.secure = 0
             room.password = None
+            answer = 'change secure'
     else:
         if secure and change_pass:
             room.secure = 1
             room.password = new_pass
+            answer = 'change secure'
 
     session_change_settings.commit()
+    return answer
     session_change_settings.close()
 
 

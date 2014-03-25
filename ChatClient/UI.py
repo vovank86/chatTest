@@ -131,13 +131,14 @@ class ChatOpen():
 
         self.am = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label='Administrate room', menu=self.am)
-
-        self.note.bind('<<NotebookTabChanged>>', self.admin_menu_act)
-        self.note.bind('<<NotebookTabChanged>>', self.is_secure)
+        self.note.bind('<<NotebookTabChanged>>', self.admin_menu_init)
         self.am.add_command(label='Current room settings...', command=self.setup_room)
 
-    def is_secure(self, event):
-        print 'start is secure'
+    def admin_menu_init(self, event):
+        self.is_secure()
+        self.admin_menu_act()
+
+    def is_secure(self):
         room = self.get_active_room()
         if room.get('secure'):
             self.room_secure_test_pass(room.get('instance'), self.note.tab(self.note.select(), "text"))
@@ -296,7 +297,7 @@ class ChatOpen():
 
         if text.count('for all users') == 1 and text.count('only for registered users') == 1:
             changes.append('auth')
-        if text.count('make secure') == 1:
+        if text.count('make secure') == 1 or text.count('make unsecure') == 1:
             changes.append('secure')
         if text.count('new password') == 1:
             changes.append('change_pass')
@@ -304,7 +305,6 @@ class ChatOpen():
         was_secure = self.get_active_room().get('secure')
 
         def check_conditions():
-
             if was_secure:
                 old_password = settings.old_pass.get()
                 if 'change_pass' in changes:
@@ -314,6 +314,10 @@ class ChatOpen():
                         settings.np.configure(bg='red')
                         settings.npc.configure(bg='red')
                         return False
+                else:
+                    print changes
+                    if len(changes) != 0:
+                        return True
             else:
                 old_password = None
                 if 'change_pass' in changes:
@@ -553,7 +557,7 @@ class ChatOpen():
                 pass
 
             if perm.get('name') == 'root':
-                return True
+                return False
             else:
                 return False
         else:
@@ -569,7 +573,7 @@ class ChatOpen():
             else:
                 return False
 
-    def admin_menu_act(self, event):
+    def admin_menu_act(self):
         if self.is_admin():
             self.menu.entryconfig(self.menu.index('Administrate room'), state=NORMAL)
         else:
@@ -668,6 +672,14 @@ def loop_process():
             elif server_answer['operation'] == 'delete_room':
                 if isinstance(chat, ChatOpen):
                     chat.delete_room_accept(server_answer['room_name'])
+
+            elif server_answer['operation'] == 'change_secure':
+                if isinstance(chat, ChatOpen):
+                    room = chat.get_room(server_answer['room_name'])
+                    if room.get('secure'):
+                        room['secure'] = 0
+                    else:
+                        room['secure'] = 1
 
     except:
         root.after(1, loop_process)
