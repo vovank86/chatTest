@@ -515,3 +515,49 @@ def delete_room(room_name):
     session_del_room.close()
 
 
+def room_change_auth(room_name, auth):
+    session_change_settings = Session()
+    room = session_change_settings.query(Room).filter(Room.name == room_name).one()
+    old_param = room.auth
+    if old_param != auth:
+        room.auth = auth
+    session_change_settings.commit()
+    session_change_settings.close()
+
+
+def room_change_secure_settings(room_name, secure, change_pass, old_pass, new_pass):
+
+    session_change_settings = Session()
+    room = session_change_settings.query(Room).filter(Room.name == room_name).one()
+    if room.secure:
+
+        if secure and change_pass and old_pass == room.password:
+            room.password = new_pass
+        elif not secure and old_pass == room.password:
+            room.secure = 0
+            room.password = None
+    else:
+        if secure and change_pass:
+            room.secure = 1
+            room.password = new_pass
+
+    session_change_settings.commit()
+    session_change_settings.close()
+
+
+def check_room_password(room_name, password):
+    session_check_room_pass = Session()
+    room = session_check_room_pass.query(Room).filter(Room.name == room_name).one()
+    if room.password == password:
+        return True
+    else:
+        return False
+
+    session_check_room_pass.close()
+
+
+
+
+
+
+

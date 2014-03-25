@@ -256,6 +256,24 @@ if __name__ == "__main__":
                             auth(sock, answer)
                             broadcast_data(sock, answer)
 
+                        elif 'settings_room' == user_data['operation']:
+                            room_name = user_data['room_name']
+                            changes = user_data['changes']
+                            room_auth = user_data['auth']
+                            room_secure = user_data['secure']
+                            room_change_pass = user_data['change_pass']
+                            room_old_pass = user_data['old_pass']
+                            room_new_pass = user_data['new_pass']
+                            if 'secure' in changes or 'change_pass' in changes:
+                                db.room_change_secure_settings(room_name, room_secure, room_change_pass, room_old_pass, room_new_pass)
+                            if 'auth' in changes:
+                                db.room_change_auth(room_name, room_auth)
+
+                        elif 'check_room_pass' == user_data['operation']:
+                            password = user_data['password']
+                            room_name = user_data['room_name']
+                            answer = json.dumps({'operation': 'check_room_pass', 'val': db.check_room_password(room_name, password)})
+                            auth(sock, answer)
 
 
                 except:

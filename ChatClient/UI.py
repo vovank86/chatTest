@@ -131,13 +131,20 @@ class ChatOpen():
 
         self.am = Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label='Administrate room', menu=self.am)
+
         self.note.bind('<<NotebookTabChanged>>', self.admin_menu_act)
+        self.note.bind('<<NotebookTabChanged>>', self.is_secure)
         self.am.add_command(label='Current room settings...', command=self.setup_room)
+
+    def is_secure(self, event):
+        print 'start is secure'
+        room = self.get_active_room()
+        if room.get('secure'):
+            self.room_secure_test_pass(room.get('instance'), self.note.tab(self.note.select(), "text"))
 
     def delete_room_accept(self, room_name):
         room = self.get_room(room_name)
         self.note.forget(room['instance'])
-
 
     def delete_room(self):
         room_name = self.note.tab(self.note.select(), "text")
@@ -163,7 +170,10 @@ class ChatOpen():
         setup_room_dialog.is_auth = IntVar()
         setup_room_dialog.l3 = Text(setup_room_dialog, font='Veranda ' + font10, height=8, width=32)
         setup_room_dialog.l2 = Label(setup_room_dialog, text='password:')
-        setup_room_dialog.old_pass = Entry(setup_room_dialog)
+        setup_room_dialog.old_pass = Entry(setup_room_dialog, show='*')
+        setup_room_dialog.old_pass_check = False
+        setup_room_dialog.old_pass_typed = ''
+
 
         _s = ''
         _auth = ''
@@ -183,7 +193,6 @@ class ChatOpen():
             setup_room_dialog.l3.delete(1.0, END)
             setup_room_dialog.l3.insert(END, _text_info)
 
-
         update_info(_config_info)
         if self.get_active_room().get('secure'):
             setup_room_dialog.mseq.set(1)
@@ -192,7 +201,6 @@ class ChatOpen():
             setup_room_dialog.is_auth.set(1)
 
         def setup_init():
-
             if setup_room_dialog.is_auth.get():
                 _ci = 'only for registered users'
                 update_info(_ci)
@@ -203,7 +211,7 @@ class ChatOpen():
             if self.get_active_room().get('secure'):
                 setup_room_dialog.l2.grid(row=1, column=0)
                 setup_room_dialog.old_pass.grid(row=1, column=1)
-                setup_room_dialog.chainge_pass(row=2, column=1, columnspan=3)
+                setup_room_dialog.change_pass.grid(row=2, column=0, columnspan=3)
                 if setup_room_dialog.mseq.get() and setup_room_dialog.new_pass.get():
                     update_info('new password' + '\n ' + _ci)
                     setup_room_dialog.npl.grid(row=3, column=0)
@@ -237,16 +245,21 @@ class ChatOpen():
 
         setup_room_dialog.auth = Checkbutton(setup_room_dialog, text='Only for registered users',
                                              variable=setup_room_dialog.is_auth, command=lambda: setup_init())
-        setup_room_dialog.room_sequre = Checkbutton(setup_room_dialog, text='room is secure',
+        setup_room_dialog.room_secure = Checkbutton(setup_room_dialog, text='room is secure',
                                                     variable=setup_room_dialog.mseq, command=lambda: setup_init())
-        setup_room_dialog.chainge_pass = Checkbutton(setup_room_dialog, text='change password of this  room',
-                                                     variable=setup_room_dialog.new_pass, command=lambda: setup_init())
+        setup_room_dialog.change_pass = Checkbutton(setup_room_dialog, text='change password of this room',
+                                                    variable=setup_room_dialog.new_pass, command=lambda: setup_init())
         setup_room_dialog.npl = Label(setup_room_dialog, text='New password:')
-        setup_room_dialog.np = Entry(setup_room_dialog)
+        setup_room_dialog.np = Entry(setup_room_dialog, show='*')
         setup_room_dialog.npcl = Label(setup_room_dialog, text='New password confirmation:')
-        setup_room_dialog.npc = Entry(setup_room_dialog)
+        setup_room_dialog.npc = Entry(setup_room_dialog, show='*')
+        setup_room_dialog.np.bind('<Button-1>', lambda a: refresh_state())
+        setup_room_dialog.np.bind('<FocusIn>', lambda a: refresh_state())
+        setup_room_dialog.npc.bind('<Button-1>', lambda a: refresh_state())
+        setup_room_dialog.npc.bind('<FocusIn>', lambda a: refresh_state())
+
         setup_room_dialog.l1.grid(row=0, column=0, columnspan=3)
-        setup_room_dialog.room_sequre.grid(row=1, column=2)
+        setup_room_dialog.room_secure.grid(row=1, column=2)
         setup_room_dialog.auth.grid(row=5, column=0, columnspan=3)
         setup_room_dialog.l3.grid(row=6, column=0, columnspan=3)
         setup_room_dialog.button_ok = Button(setup_room_dialog, text='OK', command=lambda: self.send_new_settings(setup_room_dialog))
@@ -254,14 +267,33 @@ class ChatOpen():
         setup_room_dialog.button_ok.grid(row=7, column=0)
         setup_room_dialog.button_cancel.grid(row=7, column=2)
 
+        if self.get_active_room().get('secure'):
+            self.room_secure_test_pass(setup_room_dialog, setup_room_dialog.room_name)
+            if setup_room_dialog.old_pass_check:
+                setup_room_dialog.l2.grid(row=1, column=0)
+                setup_room_dialog.old_pass.grid(row=1, column=1)
+                setup_room_dialog.change_pass.grid(row=2, column=0, columnspan=3)
+                setup_room_dialog.old_pass.insert(0, setup_room_dialog.old_pass_typed)
+
+        setup_room_dialog.close = lambda: setup_room_dialog.destroy()
+
+        def refresh_state():
+            setup_room_dialog.np.configure(bg='white')
+            setup_room_dialog.npc.configure(bg='white')
 
     def send_new_settings(self, settings):
-        changes=[]
+        changes = []
         auth = settings.is_auth.get()
         secure = settings.mseq.get()
         change_pass = settings.new_pass.get()
         room_name = settings.room_name
         text = settings.l3.get("0.0", END).__str__()
+        new_password = settings.np.get()
+        new_password_c = settings.npc.get()
+        old_password = settings.old_pass.get()
+        old_pass = None
+        new_pass = None
+
         if text.count('for all users') == 1 and text.count('only for registered users') == 1:
             changes.append('auth')
         if text.count('make secure') == 1:
@@ -269,8 +301,54 @@ class ChatOpen():
         if text.count('new password') == 1:
             changes.append('change_pass')
 
-        print changes
-        print room_name, auth, secure, change_pass
+        was_secure = self.get_active_room().get('secure')
+
+        def check_conditions():
+
+            if was_secure:
+                old_password = settings.old_pass.get()
+                if 'change_pass' in changes:
+                    if new_password == new_password_c and new_password != '':
+                        return True
+                    else:
+                        settings.np.configure(bg='red')
+                        settings.npc.configure(bg='red')
+                        return False
+            else:
+                old_password = None
+                if 'change_pass' in changes:
+                    if new_password == new_password_c and new_password != '':
+                        return True
+                    else:
+                        settings.np.configure(bg='red')
+                        settings.npc.configure(bg='red')
+                        return False
+                else:
+                    if len(changes) != 0:
+                        return True
+                    else:
+                        settings.close()
+                        return False
+
+        if check_conditions():
+            if old_password != '' or old_password is not None:
+                old_pass = hashlib.md5(old_password).hexdigest()
+            else:
+                old_pass = None
+
+            if new_password != '' or new_password is not None:
+                print new_password
+                new_pass = hashlib.md5(new_password).hexdigest()
+
+            else:
+                new_pass = None
+
+            mess = json.dumps({'operation': 'settings_room', 'changes': changes, 'room_name': room_name, 'auth': auth,
+                               'secure': secure, 'change_pass': change_pass,
+                               'old_pass': old_pass,
+                               'new_pass': new_pass})
+            client.s.send(mess)
+            settings.close()
 
     def add_new_room(self):
         new_room_dialog = Toplevel(self.chat)
@@ -496,6 +574,49 @@ class ChatOpen():
             self.menu.entryconfig(self.menu.index('Administrate room'), state=NORMAL)
         else:
             self.menu.entryconfig(self.menu.index('Administrate room'), state=DISABLED)
+
+    def room_secure_test_pass(self, parent, room):
+        check = Toplevel(parent)
+
+        def close():
+            check.destroy()
+            parent.destroy()
+
+        def send_pass(room, password, parent):
+            client.s.send(json.dumps({'operation': 'check_room_pass', 'password': hashlib.md5(password).hexdigest(), 'room_name': room}))
+
+            def take_answer():
+                try:
+                    sa = client.s.recv(client.buf)
+                    sa = json.loads(sa)
+                    if sa['operation'] == 'check_room_pass':
+                        if sa['val']:
+                            check.destroy()
+                            parent.old_pass_check = sa['val']
+                            parent.old_pass_typed = password
+                        else:
+                           close()
+
+                except:
+                    take_answer()
+                    return
+
+            take_answer()
+
+        check.label = Label(check, text='password: ')
+        check.password = Entry(check, show='*')
+        check.ok = Button(check, text='OK', command=lambda: send_pass(room, check.password.get(), parent))
+        check.cancel = Button(check, text='Cancel', command=lambda: close())
+
+        check.label.grid(row=0, column=0)
+        check.password.grid(row=0, column=1)
+        check.ok.grid(row=1, column=0)
+        check.cancel.grid(row=1, column=1)
+
+        check.password.focus_set()
+        check.transient(parent)
+        check.grab_set()
+        parent.wait_window(check)
 
 
 def loop_process():
