@@ -93,9 +93,9 @@ class UserControl(Frame):
         self.display_user()
 
     def rename(self, user_name):
-        print user_name, self.user_name
+        #print user_name, self.user_name
         self.user_name = user_name
-        print self.user_name
+        #print self.user_name
         self.display_user()
 
     def delete_user(self):
@@ -332,7 +332,7 @@ class UserList(Frame):
                 self.users.get(user).set_user_address(user_list.get(user))
 
             elif self.user != user and self.room == 'default':
-                print user
+                #print user
                 user = {user: user_list.get(user)}
                 self.user_add(user)
         for user in self.users:

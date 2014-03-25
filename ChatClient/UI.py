@@ -57,7 +57,7 @@ class LoginForm:
         self.user_name.focus_set()
 
     def change_user_type(self):
-        print 'change user type', self.user_type.get()
+        #print 'change user type', self.user_type.get()
 
         if self.user_type.get():
             self.lab2.grid(row=2, sticky=W)
@@ -106,7 +106,7 @@ class ChatOpen():
         self.menu.add_cascade(label='File', menu=self.fm)
 
         data = client.json.loads(chat_data)
-        print data
+        #print data
         if not data['user_reg']:
             self.fm.add_command(label='Registration...', command=self.registration)
             self.fm.add_separator()
@@ -315,7 +315,7 @@ class ChatOpen():
                         settings.npc.configure(bg='red')
                         return False
                 else:
-                    print changes
+                    #print changes
                     if len(changes) != 0:
                         return True
             else:
@@ -341,7 +341,7 @@ class ChatOpen():
                 old_pass = None
 
             if new_password != '' or new_password is not None:
-                print new_password
+                #print new_password
                 new_pass = hashlib.md5(new_password).hexdigest()
 
             else:
@@ -469,7 +469,7 @@ class ChatOpen():
         msg.set('')
 
     def exit(self):
-        print 'exit'
+        #print 'exit'
         message = {"operation": "exit", "user": self.user}
         message = json.dumps(message)
         client.s.send(message)
