@@ -12,6 +12,10 @@ import hashlib
 import sys
 import settings
 import time
+import logging
+
+logging.basicConfig(format=settings.LOGGING['FORMAT'], level=logging.DEBUG, filename=settings.LOGGING['FILE'])
+
 
 if sys.platform == 'win32':
     database = settings.DATABASES['default']
@@ -194,6 +198,7 @@ def install_chat(session, PORT):
 
     print "\nThanks."
     print "\nChat server started on port " + str(PORT)
+    logging.info('chat was installed')
 
 
 def auth_user(login, password, type):
@@ -240,36 +245,27 @@ def check_pass(user, password):
 
 
 def registration(login, new_login, new_name, new_password):
-    print login, new_login, new_name, new_password
     session_reg = Session()
     user = session_reg.query(User).filter(User.login.in_([login])).one()
-    print user.__dict__
     user.password = hashlib.md5(new_password).hexdigest()
     user.registered = 1
     user.login = new_login
     user.name = new_name
-    print user.__dict__
     auth_perm = session_reg.query(Perm).filter(Perm.name == 'auth_user').one()
-    print auth_perm
     room = session_reg.query(Room).filter(Room.name == 'default').one()
-    print room
     a = session_reg.query(Associations).filter(
         Associations.user_id == user.id, Associations.room_id == room.id).one()
-    print a.__dict__
     a.perm = auth_perm
-    print a.__dict__
     session_reg.commit()
     session_reg.close()
 
 
 def is_admin(uname, room):
     session_ia = Session()
-
     u = session_ia.query(User.id).filter(User.name == uname).scalar()
     r = session_ia.query(Room.id).filter(Room.name == room).scalar()
     p = session_ia.query(Associations.perm_id).filter(Associations.room_id == r, Associations.user_id == u).scalar()
     p_name = session_ia.query(Perm.name).filter(Perm.id == p).scalar()
-
     if p_name == 'admin' or p_name == 'root':
         return 'True'
     else:
@@ -283,7 +279,6 @@ def start_sys(user, session):
     This function return data for UI initialisation.
     @param user
     """
-
     user_rooms = []
     rooms = session.query(Room).all()
     for room in rooms:
@@ -305,7 +300,6 @@ def start_sys(user, session):
 
     start_chat_system = {"user_login": user.login, "user_name": user.name, "user_reg": user.registered,
                          "user_rooms": user_rooms}
-
     return start_chat_system
 
 
@@ -317,14 +311,12 @@ def kick_user(user, room):
     if room == 'default':
         user = session_ku.query(User).get(u)
         assoc_all = session_ku.query(Associations).filter(Associations.user_id == u).all()
-        print assoc_all
         rooms = []
         for a in assoc_all:
             rooms.append(session_ku.query(Room.name).filter(Room.id == a.room_id).scalar())
             session_ku.delete(a)
         session_ku.delete(user)
         session_ku.commit()
-        print rooms
         return rooms
     else:
         assoc = session_ku.query(Associations).filter(Associations.room_id == r, Associations.user_id == u).delete()

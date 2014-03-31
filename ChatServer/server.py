@@ -91,7 +91,8 @@ if __name__ == "__main__":
         if 0 == session.query(db.User).order_by(db.User.id).count():
             db.install_chat(session, PORT)
         else:
-            print "Chat server started on port " + str(PORT)
+            print "Chat server started on port " + str(PORT) + '\nAll server messages will be written to the ' + settings.LOGGING['FILE'] + ' file...'
+            db.logging.info(u'Chat server started on port ' + str(PORT))
 
     cheek_first_run()
 
@@ -104,7 +105,7 @@ if __name__ == "__main__":
             if sock == server_socket:
                 sockfd, addr = server_socket.accept()
                 CONNECTION_LIST.append(sockfd)
-                print "Client (%s, %s) connected" % addr
+                db.logging.info(u'Client (%s, %s) connected' % addr)
 
             #Some incoming message from a client
             else:
@@ -115,11 +116,11 @@ if __name__ == "__main__":
                     data = sock.recv(RECV_BUFFER)
                     if data:
                         user_data = json.loads(data)
-                        print 'called server operation:', user_data["operation"]
+                        db.logging.info(u'called server operation: ' + str(user_data["operation"]))
                         if "login" == user_data["operation"]:
                             if not db.auth_user(user_data['user'], user_data['password'], user_data['type']):
                                 send_text = 'fail'
-                                print "Client (%s, %s) login wrong" % addr
+                                db.logging.info(u'Client (%s, %s) login wrong' % addr)
                                 sock.close()
                                 CONNECTION_LIST.remove(sock)
                             else:
@@ -138,7 +139,7 @@ if __name__ == "__main__":
                                 change_users_status = json.dumps({'operation': 'change_user_status', 'users': users})
                                 send_text = json.dumps(base_data)
                                 #print send_text
-                                print "Client (%s, %s) was login" % addr
+                                db.logging.info(u'Client (%s, %s) was login' % addr)
                                 auth(sock, send_text)
                                 broadcast_data(sock, change_users_status)
 
@@ -152,7 +153,7 @@ if __name__ == "__main__":
                             users.pop(user_data['user'])
                             change_users_status = json.dumps({'operation': 'change_user_status', 'users': users})
                             broadcast_data(sock, change_users_status)
-                            print "Client (%s, %s) is offline" % address
+                            db.logging.info(u'Client (%s, %s) is offline' % address)
                             sock.close()
                             CONNECTION_LIST.remove(sock)
                             continue
@@ -165,9 +166,7 @@ if __name__ == "__main__":
                         elif "kick_user" == user_data["operation"]:
                             kick = db.kick_user(user_data["user"], user_data["room"])
                             if isinstance(kick, list):
-                                print kick
                                 for k in kick:
-                                    print k
                                     mes = json.dumps({'operation': 'kick_user', 'user': user_data["user"], 'room': k})
                                     broadcast_data(sock, mes)
                                     auth(sock, mes)
@@ -194,7 +193,6 @@ if __name__ == "__main__":
                                     {'operation': 'send_mess', 'user': 'server message', 'room': user_data['room'],
                                      'text': 'User "' + user_data['user'] + '" you permissions were changed by admin, so please quit from the chat and enter again!'})
                                 broadcast_data(sock, answer)
-
 
                         elif "add_user" == user_data["operation"]:
                             user = user_data['user']
@@ -266,7 +264,6 @@ if __name__ == "__main__":
                             room_new_pass = user_data['new_pass']
                             if 'secure' in changes or 'change_pass' in changes:
                                 answer = db.room_change_secure_settings(room_name, room_secure, room_change_pass, room_old_pass, room_new_pass)
-                                print answer
                                 if answer == 'change secure':
                                     mess = json.dumps({'operation': 'change_secure', 'room_name': room_name})
                                     broadcast_data(sock, mess)
@@ -281,10 +278,9 @@ if __name__ == "__main__":
                             answer = json.dumps({'operation': 'check_room_pass', 'val': db.check_room_password(room_name, password)})
                             auth(sock, answer)
 
-
                 except:
-                    e = sys.exc_info()[0]
-                    print e
+                    e = str(sys.exc_info()[0])
+                    db.logging.error(e)
                     sock.close()
                     CONNECTION_LIST.remove(sock)
                     continue

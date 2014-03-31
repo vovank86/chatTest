@@ -7,6 +7,11 @@ __author__ = 'Vladimir Kanubrikov'
 # Chat server settings
 #******************************
 
+LOGGING = {
+    'FORMAT': u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+    'FILE': u'server.log',
+}
+
 DATABASES = {
     'default': {
         'ENGINE': 'sqlite://',
