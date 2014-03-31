@@ -7,7 +7,11 @@ import socket
 import select
 import sys
 import json
-from settings import CLIENT_SOCKET
+from settings import CLIENT_SOCKET, LOGGING
+import logging
+
+logging.basicConfig(format=LOGGING['FORMAT'], level=logging.DEBUG, filename=LOGGING['FILE'])
+
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = CLIENT_SOCKET['HOST']
@@ -17,19 +21,15 @@ buf = CLIENT_SOCKET['BUFFER_SIZE']
 
 def connect(user_data):
     s.settimeout(2)
-
     try:
         s.connect((host, port))
-
     except:
-        print 'Unable to connect'
+        logging.error(u'Unable to connect')
         sys.exit()
 
-    print 'Connected to remote host.'
-
+    logging.info(u'Connected to remote host.')
     user_data = json.dumps(user_data)
     s.send(user_data)
-
     while 1:
         socket_list = [s]
 
@@ -41,13 +41,12 @@ def connect(user_data):
             if sock == s:
                 data = sock.recv(buf)
                 if not data:
-                    print '\nDisconnected from chat server'
+                    logging.info(u'Disconnected from chat server, no data in server answer.')
                     sys.exit()
                 else:
                     if "fail" == data:
                         return False
                     else:
                         return data
-            #user entered a message
             else:
-                print 'wait'
+                logging.info(u'wait for next server answer')

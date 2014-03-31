@@ -469,7 +469,7 @@ class ChatOpen():
         msg.set('')
 
     def exit(self):
-        #print 'exit'
+        client.logging.info(u'You left the chat.')
         message = {"operation": "exit", "user": self.user}
         message = json.dumps(message)
         client.s.send(message)

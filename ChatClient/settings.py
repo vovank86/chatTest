@@ -14,6 +14,10 @@ if sys.platform == 'darwin':
 else:
     FONT_MULTIPLIER = 1
 
+LOGGING = {
+    'FORMAT': u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+    'FILE': u'client.log',
+}
 
 CLIENT_SOCKET = {
     'BUFFER_SIZE': 4096,

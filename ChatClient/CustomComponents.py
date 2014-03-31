@@ -16,10 +16,6 @@ font8 = str(int(8 * FONT_MULTIPLIER))
 font10 = str(int(10 * FONT_MULTIPLIER))
 font20 = str(int(20 * FONT_MULTIPLIER))
 
-#TODO: special functionality for edit permissions
-#TODO: make logic for work with server (add update user list after add new user, add functionality for voting)
-#TODO: make component that can replace standard notepad component and will contents special functionality
-
 
 class UserControl(Frame):
     def __init__(self, parent, room_name, perm, user, **options):
@@ -93,9 +89,8 @@ class UserControl(Frame):
         self.display_user()
 
     def rename(self, user_name):
-        #print user_name, self.user_name
+        client.logging.debug('start rename operation: old name = ' + self.user_name + ' new name = ' + user_name)
         self.user_name = user_name
-        #print self.user_name
         self.display_user()
 
     def delete_user(self):
